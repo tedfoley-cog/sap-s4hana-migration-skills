@@ -72,7 +72,7 @@ If the standard covers the requirement, **stop** — no extension needed. The mo
 In-app extensibility is the lowest-effort option. Key users configure extensions directly in Fiori apps without developer involvement. Capabilities include:
 
 - **Custom Fields**: add fields to standard business objects and their UIs via the *Custom Fields and Logic* app ([SAP Help: Custom Fields and Logic](https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/9a281eac983f4f688d0deedc96b3c61c/95d496fad8bc4a5ebf6b6a77a9eb616d.html)).
-- **Custom Logic**: attach small ABAP scripts to released BAdI spots exposed through the in-app cockpit. These execute within the ABAP language version *ABAP for Key Users* and can only reference objects released with visibility **C2 — Use in Key User Apps** ([SAP Help: Released APIs — Visibility](https://help.sap.com/docs/abap-cloud/abap-development-tools-user-guide/released-apis)).
+- **Custom Logic**: attach small ABAP scripts to released BAdI spots exposed through the in-app cockpit. These execute within the ABAP language version *ABAP for Key Users* and can only reference objects released with contract **C1 — Use System-Internally** and visibility **Use in Key User Apps** ([SAP Help: Released APIs — Visibility](https://help.sap.com/docs/abap-cloud/abap-development-tools-user-guide/released-apis)).
 - **Custom CDS Views**: create analytical views on top of released CDS entities.
 - **Custom Business Objects**: lightweight data models with simple CRUD logic.
 
