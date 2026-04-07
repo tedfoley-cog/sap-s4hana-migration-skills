@@ -136,7 +136,7 @@ Is this a new SAP implementation (no existing data)?
     - **Material number length extension** if configured ([SAP Note 2270333](https://me.sap.com/notes/2270333))
     See skill `sap-functional-simplifications` for details on each conversion.
 
-### Phase 7: POST-PROCESSING (After Go-Live)
+### Phase 7: POST-PROCESSING (Final Downtime)
 
 20. SUM performs final cleanup: recompilation of ABAP programs, regeneration of screens, and activation of post-conversion tasks. The system is brought back online after this phase completes.
 21. Run **`/SDF/RC_START_CHECK`** again in post-conversion mode to verify the converted system is consistent.
@@ -207,7 +207,7 @@ SUM GUI opens at `https://sapapp01:1129/lmsl/sumabap/E01`.
 | — SPAU | 1.5 h | 87 objects adjusted by 4 developers in parallel |
 | — Data conversions | 1 h | BP sync (CVI), MATDOC migration, Universal Journal |
 | POST-PROCESSING | 2 h | ABAP recompilation, screen regeneration |
-| **Total downtime** | **14 h** | System online Saturday 10:00 |
+| **Total downtime** | **16 h** | System online Saturday 12:00 |
 
 ### Step 5 — Post-conversion verification
 
