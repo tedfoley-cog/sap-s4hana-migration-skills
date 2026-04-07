@@ -20,7 +20,7 @@ metadata:
     - "SAP Help Portal - Modification Adjustment During Upgrade"
     - "SAP Help Portal - Modification and Enhancement Adjustment Planning (SL Toolset)"
     - "SAP Community - Understanding the need of SPDD, SPAU & SPAU_ENH (patil477pavan, 2020)"
-    - "SAP Community - SPDD and SPAU Phases during S/4 HANA Migration (2018)"
+    - "SAP Community - SPDD and SPAU Phases during S/4 HANA Migration (Shakeel_Ahmed1, 2018)"
 related_skills:
   - sap-sum-dmo
   - sap-atc-readiness
@@ -312,6 +312,6 @@ Teams often process SPDD and SPAU but forget to check `SPAU_ENH`. Enhancement fr
 
 8. **SAP Community: "Understanding the need of SPDD, SPAU & SPAU_ENH in SAP Upgrade Project"** (patil477pavan, September 2020) - Community blog explaining the three transactions, their sequencing, and practical tips for processing order. ([community.sap.com](https://community.sap.com/t5/technology-blog-posts-by-members/understanding-the-need-of-spdd-spau-amp-spau-enh-in-upgrade/ba-p/13540328))
 
-9. **SAP Community: "SPDD and SPAU Phases during S/4 HANA Migration"** (January 2018) - Community discussion on SPDD/SPAU sequencing specific to S/4HANA conversion scenarios. ([community.sap.com](https://community.sap.com/t5/enterprise-resource-planning-q-a/spdd-and-spau-phases-during-s-4-hana-migration/qaq-p/13364097))
+9. **SAP Community: "SPDD and SPAU Phases during S/4 HANA Migration"** (Shakeel_Ahmed1, January 2018) - Community blog on SPDD/SPAU sequencing specific to S/4HANA conversion scenarios. ([community.sap.com](https://community.sap.com/t5/enterprise-resource-planning-blog-posts-by-members/spdd-and-spau-phases-during-s-4-hana-migration/ba-p/13364097))
 
 10. **[SAP Note 2399707](https://me.sap.com/notes/2399707)** - "Conversion Pre-Checks": Documents pre-checks that should be run before starting SUM, including modification inventory validation.
