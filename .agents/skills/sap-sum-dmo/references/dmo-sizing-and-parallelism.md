@@ -58,10 +58,12 @@ R3load is the data migration engine used by DMO. Each R3load process handles one
 A rough formula for R3load migration time:
 
 ```
-Migration time (hours) ≈ Source DB size (TB) × 3 / parallel_jobs
+Migration time (hours) ≈ Source DB size (TB) × 48 / parallel_jobs
 ```
 
-Example: 4 TB source, 16 parallel jobs → 4 × 3 / 16 = 0.75 hours per TB-equivalent ≈ **12 hours**.
+The constant `48` represents the approximate hours a single R3load process needs per TB of data (including export, transfer, and import). This varies significantly with I/O performance.
+
+Example: 4 TB source, 16 parallel jobs → 4 × 48 / 16 = **12 hours**.
 
 This is a rough estimate. Actual times depend on:
 - Source DB I/O performance (read throughput)

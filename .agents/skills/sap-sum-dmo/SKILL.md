@@ -230,7 +230,7 @@ SUM GUI opens at `https://sapapp01:1129/lmsl/sumabap/E01`.
 
 6. **Insufficient R3load parallelism.** The default R3load parallelism is often too low for large databases. Not tuning `PARALLEL_JOBS_RLOAD` and not enabling table splitting means the data migration runs serially on large tables, dramatically extending downtime. Conversely, setting parallelism too high can overwhelm source DB I/O. Use rehearsal runs to find the optimal setting ([DMO Guide](https://help.sap.com/doc/38301960cfe4484587f9ce5e8e3c4ea0/Latest/en-US/dmo_of_sum2_to_hana.pdf)).
 
-7. **Not archiving data before the conversion.** Large historical data volumes in tables like BSEG, CDPOS, MSEG, and NAST directly increase both migration time and HANA memory requirements. Archiving or purging obsolete data before SUM start can reduce downtime by 30–60% and significantly lower HANA sizing requirements.
+7. **Not archiving data before the conversion.** Large historical data volumes in tables like BSEG, CDPOS, MSEG, and NAST directly increase both migration time and HANA memory requirements. Archiving or purging obsolete data before SUM start can reduce downtime by 30–60% and significantly lower HANA sizing requirements ([SAP Note 1872170](https://me.sap.com/notes/1872170)).
 
 ## References
 
