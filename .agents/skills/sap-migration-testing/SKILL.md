@@ -31,7 +31,7 @@ metadata:
     - "SAP Community — SAP Project Manager's Guide to SAP Project Cutover (Greg Baus, 2021)"
     - "SAP Community — Running your System Conversion to SAP S/4HANA Cloud (2025)"
     - "SAP Press — Testing SAP Solutions (2nd Edition)"
-    - "SAP Community — Test Automation Tool for SAP S/4HANA Cloud (2022)"
+    - "SAP Community — Test Automation Tool for SAP S/4HANA Cloud (Aniruddh, November 2022)"
 related_skills:
   - sap-sum-dmo
   - sap-spdd-spau
@@ -308,6 +308,6 @@ Without severity classification (S1-S4) and triage SLAs, all defects are treated
 - [SAP Note 2227764](https://me.sap.com/notes/2227764) — Material Documents in MATDOC.
 - [SAP Note 1976487](https://me.sap.com/notes/1976487) — S/4HANA Simplification List.
 - [SAP Community: SAP Project Manager's Guide to SAP Project Cutover](https://community.sap.com/t5/enterprise-resource-planning-blog-posts-by-sap/sap-project-manager-s-guide-to-sap-project-cutover/ba-p/13510809) — Greg Baus, October 2021. Covers cutover strategy, simulation, and dress rehearsal aligned to SAP Activate phases.
-- [SAP Community: Test Automation Tool for SAP S/4HANA Cloud, Public Edition](https://community.sap.com/t5/enterprise-resource-planning-blog-posts-by-sap/test-automation-tool-for-sap-s-4hana-cloud-public-edition/ba-p/13559107) — November 2022. Overview of built-in test automation capabilities.
+- [SAP Community: Test Automation Tool for SAP S/4HANA Cloud, Public Edition](https://community.sap.com/t5/enterprise-resource-planning-blog-posts-by-sap/test-automation-tool-for-sap-s-4hana-cloud-public-edition-a-game-changer-in/ba-p/13566733) — Aniruddh, November 2022. Overview of built-in test automation capabilities.
 - [SAP Press: Testing SAP Solutions, 2nd Edition](https://www.sap-press.com/testing-sap-solutions_4950/) — Chapters 3-5 cover test planning, execution, and automation for SAP projects.
 - [SAP Help: ABAP Unit](https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/index.htm?file=abenabap_unit.htm) — ABAP Unit framework reference for writing and running unit tests.
