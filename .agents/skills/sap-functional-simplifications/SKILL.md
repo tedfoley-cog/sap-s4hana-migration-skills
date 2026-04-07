@@ -291,9 +291,9 @@ These simplifications do not require full sections but must be on the migration 
 
 **Credit Management** — The classic FI-AR credit management (`KKBER`, `KNKK` tables, transactions `FD32`/`FD33`) is replaced by SAP Credit Management (also known as Financial Supply Chain Management Credit Management, `UKM_*` tables). Custom code accessing `KNKK` or calling `FD32` BAPIs must be refactored to use the new `UKM` APIs ([SAP Note 1976487](https://me.sap.com/notes/1976487)).
 
-**APO → IBP** — SAP Advanced Planning and Optimization (APO) is not part of S/4HANA. Demand planning and supply network planning move to SAP Integrated Business Planning (IBP), which is a cloud solution. Custom APO interfaces (CIF, `/SAPAPO/` function modules) must be replaced. This is a separate project workstream, not an in-place code remediation.
+**APO → IBP** — SAP Advanced Planning and Optimization (APO) is not part of S/4HANA. Demand planning and supply network planning move to SAP Integrated Business Planning (IBP), which is a cloud solution. Custom APO interfaces (CIF, `/SAPAPO/` function modules) must be replaced. This is a separate project workstream, not an in-place code remediation ([SAP Note 1976487](https://me.sap.com/notes/1976487)).
 
-**CRM → S/4HANA or C/4HANA** — SAP CRM is not part of S/4HANA. CRM functionality is either embedded in S/4HANA (basic sales/service) or provided by SAP CX (C/4HANA, now SAP Customer Experience). Custom CRM middleware interfaces need reassessment. Again, this is a separate migration workstream.
+**CRM → S/4HANA or C/4HANA** — SAP CRM is not part of S/4HANA. CRM functionality is either embedded in S/4HANA (basic sales/service) or provided by SAP CX (C/4HANA, now SAP Customer Experience). Custom CRM middleware interfaces need reassessment. Again, this is a separate migration workstream ([SAP Note 1976487](https://me.sap.com/notes/1976487)).
 
 ## Worked example
 
