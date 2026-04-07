@@ -4,12 +4,6 @@ Devin-native skills for **SAP ECC → S/4HANA migration** projects.
 
 This repository is the canonical source of agent-readable runbooks for the major activities in a brownfield SAP system conversion: custom code scoping, ATC readiness, simplification database lookup, SPDD/SPAU adjustments, SUM/DMO cutover, functional simplifications (Business Partner, MATNR length, MATDOC, Universal Journal), HANA performance remediation, modern ABAP rewriting, clean-core extensibility, data migration cockpit, Fiori activation, and migration testing.
 
-## Why this repo exists
-
-[`secondsky/sap-skills`](https://github.com/secondsky/sap-skills) is a great resource for **building new things** on modern SAP stacks (BTP, CAP, Fiori, RAP, CDS, HANA). It does **not** cover the brownfield ECC → S/4HANA migration path. This repo fills that gap.
-
-These skills are intentionally narrow, runbook-style, and citation-heavy. Each skill is self-contained and immediately invocable by an AI agent without needing to read the rest of the repo.
-
 ## Supported harnesses
 
 | Harness | Path scanned | Notes |
