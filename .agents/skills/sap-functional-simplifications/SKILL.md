@@ -321,13 +321,15 @@ TABLES: mara, a305.
 
 DATA: lv_matnr   TYPE c LENGTH 18,       " << hard-coded length
       lt_output  TYPE TABLE OF z_price_s,
-      ls_output  TYPE z_price_s.
+      ls_output  TYPE z_price_s,
+      lt_makt    TYPE TABLE OF makt,
+      ls_makt    TYPE makt.
 
 SELECT matnr maktx FROM makt
-  INTO TABLE @DATA(lt_makt)
-  WHERE spras = @sy-langu.
+  INTO TABLE lt_makt
+  WHERE spras = sy-langu.
 
-LOOP AT lt_makt INTO DATA(ls_makt).
+LOOP AT lt_makt INTO ls_makt.
   lv_matnr = ls_makt-matnr.              " truncation happens here
   " ... pricing lookup using lv_matnr ...
   ls_output-matnr = lv_matnr.
@@ -455,8 +457,8 @@ SELECT bkpf~bukrs bkpf~belnr bseg~buzei bseg~dmbtr
     ON bkpf~bukrs = bseg~bukrs
    AND bkpf~belnr = bseg~belnr
    AND bkpf~gjahr = bseg~gjahr
-  WHERE bkpf~budat IN @so_budat
-  INTO TABLE @DATA(lt_items).
+  WHERE bkpf~budat IN so_budat
+  INTO TABLE lt_items.
 ```
 
 **Why it fails**: `BSEG` is a compatibility view on `ACDOCA`. This query forces the database to read from `ACDOCA`, project into the `BSEG` compatibility structure, then join back to `BKPF`. This is slower than reading `ACDOCA` directly. Additionally, `BSEG` compatibility views do not contain carry-forward entries or migration correction items that exist only in `ACDOCA` — the report is incomplete ([SAP Note 2270407](https://me.sap.com/notes/2270407)).
