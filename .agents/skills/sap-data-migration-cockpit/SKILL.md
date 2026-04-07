@@ -20,7 +20,8 @@ metadata:
     - "SAP Note 2733253 - Migration Cockpit Fiori App"
     - "SAP Note 3043614 - System Settings for Migration Projects"
     - "SAP Fiori Apps Reference Library: Migrate Your Data (F3473)"
-    - "SAP Community blog: Part 1 Migrate your Data - Migration Cockpit (2021)"
+    - "SAP Community blog by Iliana Olvera: Part 1 Migrate your Data - Migration Cockpit (March 2021)"
+    - "SAP Community blog by Mickael Quesnot: Tutorial — Using the SAP S/4HANA Migration Cockpit App (February 2025)"
     - "SAP-samples/s4hana-mc-xml-file-splitter (GitHub)"
     - "openSAP course: Data Migration to SAP S/4HANA"
 related_skills:
@@ -301,6 +302,6 @@ Choose **Execute**. The cockpit creates 1,000 Business Partner records with link
 8. [SAP Note 2265093](https://me.sap.com/notes/2265093) — S/4HANA Business Partner Approach (Customer/Vendor Integration).
 9. [SAP Fiori Apps Reference Library: Migrate Your Data (F3473)](https://fioriappslibrary.hana.ondemand.com/sap/fix/externalViewer/?appId=F3473) — Official Fiori app documentation.
 10. [SAP-samples/s4hana-mc-xml-file-splitter](https://github.com/SAP-samples/s4hana-mc-xml-file-splitter) — Python CLI tool for splitting large Migration Cockpit XML files (Apache-2.0).
-11. [SAP Community: Part 1 — Migrate your Data - Migration Cockpit](https://community.sap.com/t5/enterprise-resource-planning-blogs-by-sap/part-1-migrate-your-data-migration-cockpit-sap-s-4hana/ba-p/13498673) — SAP blog (March 2021) covering staging tables approach.
-12. [SAP Community: Tutorial — Using the SAP S/4HANA Migration Cockpit App](https://community.sap.com/t5/technology-blog-posts-by-sap/tutorial-using-the-sap-s-4hana-migration-cockpit-app/ba-p/13964553) — SAP blog (February 2025) step-by-step tutorial.
+11. [SAP Community: Part 1 — Migrate your Data - Migration Cockpit](https://community.sap.com/t5/enterprise-resource-planning-blog-posts-by-sap/part-1-migrate-your-data-migration-cockpit-sap-s-4hana-2020-and-higher-and/ba-p/13501516) — Blog by Iliana Olvera, SAP (March 2021) covering staging tables approach.
+12. [SAP Community: Tutorial — Using the SAP S/4HANA Migration Cockpit App](https://community.sap.com/t5/technology-blog-posts-by-members/tutorial-using-the-sap-s-4hana-migration-cockpit-app-step-by-step/ba-p/14016874) — Blog by Mickael Quesnot (February 2025) step-by-step tutorial.
 13. [openSAP: Data Migration to SAP S/4HANA](https://open.sap.com/courses/s4h17) — Free course covering migration cockpit concepts and hands-on exercises.
