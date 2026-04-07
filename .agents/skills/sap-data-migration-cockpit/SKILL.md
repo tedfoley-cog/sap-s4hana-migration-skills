@@ -92,7 +92,7 @@ The Migration Cockpit tooling has evolved across S/4HANA releases:
 |------|------------------|--------|-------|
 | Migration Cockpit (legacy) | `LTMC` | **Deprecated** from S/4HANA 2020 | Read-only access to old projects remains ([SAP Note 2733253](https://me.sap.com/notes/2733253)) |
 | Migrate Your Data (Fiori) | App ID `F3473` | **Current** | Replaces LTMC; access via Fiori Launchpad ([SAP Fiori Apps Reference Library](https://fioriappslibrary.hana.ondemand.com/sap/fix/externalViewer/?appId=F3473)) |
-| Migration Object Modeler | `LTMOM` | **Current** | For customizing/extending migration objects ([SAP Help: Migration Object Modeler](https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/29193bf0ebdd4583930b2176cb993268/)) |
+| Migration Object Modeler | `LTMOM` | **Current** | For customizing/extending migration objects ([SAP Help: Migration Object Modeler](https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/29193bf0ebdd4583930b2176cb993268/3732aa6c1acf4184812f0db7beb8e037.html)) |
 
 > **Important**: If the target system is S/4HANA 2022 or later, `LTMC` can no longer be used to create new migration projects. Use the Migrate Your Data Fiori app exclusively ([SAP Note 2733253](https://me.sap.com/notes/2733253)).
 
@@ -100,7 +100,7 @@ The Migration Cockpit tooling has evolved across S/4HANA releases:
 
 Before creating a project, review the **migration object catalog** to confirm that standard objects exist for your data entities.
 
-- Access the catalog via **Explore Migration Objects** in the Data Migration section of SAP Help Portal ([SAP Help: Available Migration Objects](https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/29193bf0ebdd4583930b2176cb993268/)).
+- Access the catalog via **Explore Migration Objects** in the Data Migration section of SAP Help Portal ([SAP Help: Available Migration Objects](https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/29193bf0ebdd4583930b2176cb993268/8dd142b479f9481891fa8b3f86648df3.html)).
 - Common standard objects include:
 
 | Migration Object | Typical Use |
@@ -146,7 +146,7 @@ For the **staging tables** approach:
 
 For the **direct transfer** approach:
 1. The cockpit automatically selects data from the source system via RFC based on the organizational units specified in the project.
-2. Review the selected data in the cockpit before proceeding ([SAP Help: Selecting Data from the Source System](https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/29193bf0ebdd4583930b2176cb993268/)).
+2. Review the selected data in the cockpit before proceeding ([SAP Help: Selecting Data from the Source System](https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/29193bf0ebdd4583930b2176cb993268/625552df9dca47d58e0deaf5085b86c3.html)).
 
 ### Step 5: Configure field mapping and value mapping
 
@@ -156,7 +156,7 @@ For the **direct transfer** approach:
   - **Value mapping rules** for translating source values to target values (e.g., old company code → new company code).
   - **Fixed values** for fields that should receive a constant across all records.
   - **Lookups** against existing master data in the target system.
-- Download and re-upload mapping values when iterating across test cycles to avoid re-entering them ([SAP Help: Mapping Tasks](https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/29193bf0ebdd4583930b2176cb993268/)).
+- Download and re-upload mapping values when iterating across test cycles to avoid re-entering them ([SAP Help: Mapping Tasks](https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/29193bf0ebdd4583930b2176cb993268/44615b12b7954556993aac54637d65b6.html)).
 
 ### Step 6: Simulate the migration
 
@@ -172,7 +172,7 @@ For the **direct transfer** approach:
      - Duplicate key violations (record already exists in target).
 4. Fix source data or customizing, re-upload, and re-simulate until the error count reaches zero or an acceptable threshold.
 
-([SAP Help: Simulating the Migration](https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/29193bf0ebdd4583930b2176cb993268/))
+([SAP Help: Simulating the Migration](https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/29193bf0ebdd4583930b2176cb993268/0ee46d72aa734da6ba5d9285da4d7148.html))
 
 > **Always simulate before executing.** Simulation is the cheapest feedback loop for identifying data quality issues. Skipping it leads to failed production loads and costly rollback efforts.
 
@@ -180,8 +180,8 @@ For the **direct transfer** approach:
 
 1. Once simulation is clean, choose **Execute** (also called **Migrate**).
 2. The cockpit creates the business objects in the target S/4HANA system using standard SAP APIs (BAPIs / business object processing).
-3. Monitor progress in the **Migration Project Screen** — the cockpit shows object-level status (Completed, Errors, In Progress) ([SAP Help: The Migration Project Screen](https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/29193bf0ebdd4583930b2176cb993268/)).
-4. Review the **Transfer List** and **Migration Results** for detailed per-record outcomes ([SAP Help: Viewing the Migration Results](https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/29193bf0ebdd4583930b2176cb993268/)).
+3. Monitor progress in the **Migration Project Screen** — the cockpit shows object-level status (Completed, Errors, In Progress) ([SAP Help: The Migration Project Screen](https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/29193bf0ebdd4583930b2176cb993268/4c7665f43a3644de8d354fbd9d277ae5.html)).
+4. Review the **Transfer List** and **Migration Results** for detailed per-record outcomes ([SAP Help: Viewing the Migration Results](https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/29193bf0ebdd4583930b2176cb993268/d2b04ea19dec4c4b9e0617b8f99912c0.html)).
 5. Download error logs for any failed records, fix source data, and re-run for the failed subset.
 
 ### Step 8: Create custom migration objects (if needed)
@@ -192,9 +192,9 @@ When the standard catalog does not cover your data entity:
 2. **Copy an existing standard object** as a starting point (recommended over creating from scratch).
 3. Add or remove fields, adjust mappings, and configure staging table structures.
 4. Activate the custom object — it will appear in the migration object selection when creating or editing a project.
-5. Transport the custom object to test and production systems alongside the migration project ([SAP Help: SAP S/4HANA Migration Object Modeler](https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/29193bf0ebdd4583930b2176cb993268/)).
+5. Transport the custom object to test and production systems alongside the migration project ([SAP Help: SAP S/4HANA Migration Object Modeler](https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/29193bf0ebdd4583930b2176cb993268/3732aa6c1acf4184812f0db7beb8e037.html)).
 
-> Custom migration objects created in `LTMOM` must be transported separately. If you modify an object after the initial transport, re-transport it before the next test cycle ([SAP Help: Transporting Migration Objects](https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/29193bf0ebdd4583930b2176cb993268/)).
+> Custom migration objects created in `LTMOM` must be transported separately. If you modify an object after the initial transport, re-transport it before the next test cycle ([SAP Help: Transporting Migration Objects](https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/29193bf0ebdd4583930b2176cb993268/898c9def31544ce487a034d9d7bdd87c.html)).
 
 ### Step 9: Verify migrated data
 
@@ -275,7 +275,7 @@ Choose **Execute**. The cockpit creates 1,000 Business Partner records with link
 
 **What goes wrong**: Teams go straight from data upload to **Execute**, then discover hundreds of errors that could have been caught cheaply in simulation. Failed executions may leave partial data in the target system requiring manual cleanup.
 
-**Why it matters**: Simulation runs the full migration logic without database commits — it is the fastest feedback loop for data quality issues. Always simulate before executing ([SAP Help: Simulating the Migration](https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/29193bf0ebdd4583930b2176cb993268/)).
+**Why it matters**: Simulation runs the full migration logic without database commits — it is the fastest feedback loop for data quality issues. Always simulate before executing ([SAP Help: Simulating the Migration](https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/29193bf0ebdd4583930b2176cb993268/0ee46d72aa734da6ba5d9285da4d7148.html)).
 
 ### 4. Treating the migration object catalog as exhaustive
 
@@ -287,7 +287,7 @@ Choose **Execute**. The cockpit creates 1,000 Business Partner records with link
 
 **What goes wrong**: Custom migration objects or modified standard objects created in `LTMOM` on the development system are not transported to the test system. The test migration then uses outdated object definitions, producing different results than expected.
 
-**Fix**: Always include `LTMOM` objects in the transport request alongside the migration project. Re-transport after every modification ([SAP Help: Transporting Migration Objects](https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/29193bf0ebdd4583930b2176cb993268/)).
+**Fix**: Always include `LTMOM` objects in the transport request alongside the migration project. Re-transport after every modification ([SAP Help: Transporting Migration Objects](https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/29193bf0ebdd4583930b2176cb993268/898c9def31544ce487a034d9d7bdd87c.html)).
 
 ## References
 
