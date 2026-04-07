@@ -250,8 +250,7 @@ For continuous integration of ABAP Unit tests, use the `piper` CLI to orchestrat
 
 ```bash
 # Example Piper step for ABAP Unit execution
-piper abapEnvironmentRunATCCheck \
-  --atcVariant S4HANA_READINESS_2025 \
+piper abapEnvironmentRunAUnitTest \
   --host "${SAP_URL}" \
   --username "${SAP_USER}" \
   --password "${SAP_PASSWORD}"
