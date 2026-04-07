@@ -55,7 +55,7 @@ Do **not** use this skill for:
 2. **RFC connectivity** between the central ATC system and each ECC source system. The central system must be registered as an ATC server for the source systems via transaction `ATC` > *Administration* > *Central ATC System* ([SAP Note 2364916](https://me.sap.com/notes/2364916)).
 3. **Simplification Database** loaded and up to date on the central ATC system, matching the target S/4HANA release. Use task list `SAP_BASIS_LOAD_SDB` via transaction `STC01` to load or refresh it ([SAP Custom Code Migration Guide for S/4HANA 2025 FPS01](https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE), section "Loading the Simplification Database").
 4. **ABAP Development Tools (ADT) for Eclipse** installed on developer workstations — required for Quick Fix remediation of findings. ADT version should match or exceed the central ATC system's ABAP release.
-5. **Authorization objects**: Users running ATC checks need `S_ATC_ADM` (administration), `S_ATC_EXE` (execution), and `S_DEVELOP` (display). Exemption approvers additionally need `S_Q_GOVERN` with activity 31 and `ATC_OTYPGO` 01 ([SAP/abap-atc-cr-cv-s4hc-tools](https://github.com/SAP/abap-atc-cr-cv-s4hc-tools/blob/main/docs/cloud-readiness-migration.md)).
+5. **Authorization objects**: Users running ATC checks need `S_ATC_ADM` (administration), `S_ATC_EXE` (execution), and `S_DEVELOP` (display). Exemption approvers additionally need `S_Q_GOVERN` with activity 31 and `ATC_OTYPGO` 01 ([SAP/abap-atc-cr-cv-s4hc-tools](https://github.com/SAP/abap-atc-cr-cv-s4hc-tools/blob/b3d58db70a7c5c27467e856b31c7b42d2ad1bac6/docs/cloud-readiness-migration.md)).
 6. **Check variant** `S4HANA_READINESS_<release>` must be available on the central system. SAP delivers these variants via SAP Notes; ensure the latest corrections are applied ([SAP Note 1912445](https://me.sap.com/notes/1912445)).
 
 ## Quick decision tree
@@ -203,7 +203,7 @@ If you have existing exemptions for the Cloud Readiness check "Usage of Released
 5. Configuration option: choose whether to generate exemptions with no restrictions (all findings exempted) or to omit successor codes (findings with available successor objects will appear as new findings for review).
 6. The migration can be undone, but modified exemptions will also be deleted.
 
-Required authorizations: `S_DEVELOP` (ACTVT 03 and 16), `S_Q_GOVERN` (ACTVT 31, ATC_OTYPGO 01), and the user must be set as an approver in transaction `ATC` > *Maintain Approvers* ([SAP/abap-atc-cr-cv-s4hc-tools, docs/cloud-readiness-migration.md](https://github.com/SAP/abap-atc-cr-cv-s4hc-tools/blob/main/docs/cloud-readiness-migration.md)).
+Required authorizations: `S_DEVELOP` (ACTVT 03 and 16), `S_Q_GOVERN` (ACTVT 31, ATC_OTYPGO 01), and the user must be set as an approver in transaction `ATC` > *Maintain Approvers* ([SAP/abap-atc-cr-cv-s4hc-tools, docs/cloud-readiness-migration.md](https://github.com/SAP/abap-atc-cr-cv-s4hc-tools/blob/b3d58db70a7c5c27467e856b31c7b42d2ad1bac6/docs/cloud-readiness-migration.md)).
 
 ### Step 8 — Produce delta worklists for progress tracking
 
@@ -222,8 +222,8 @@ Delta worklists compare two successive ATC runs to show remediation progress ([S
 ### Scenario: Readiness check for `ZCL_CUSTOMER_HELPER` on S/4HANA 2025
 
 **Setup**:
-- Central ATC system: S/4HANA 2025 sandbox (`S4D`, client 100)
-- Source ECC system: ECC 6.0 EHP8 (`ECD`, client 200), registered as RFC destination `ECC_DEV_RFC`
+- Central ATC system: S/4HANA 2025 sandbox (`<system-id>`, client `<client-no>`)
+- Source ECC system: ECC 6.0 EHP8 (`<system-id>`, client `<client-no>`), registered as RFC destination `<rfc-destination>`
 - Target release: S/4HANA 2025 FPS01
 - Object scope: Package `ZCUSTOMER` containing class `ZCL_CUSTOMER_HELPER` and related objects
 
@@ -244,7 +244,7 @@ Transaction STC01 → Task List: SAP_BASIS_LOAD_SDB → Execute
 Transaction ATC → Run Check
   Object Set: Package ZCUSTOMER
   Check Variant: S4HANA_READINESS_2025_FPS01
-  Source System: ECC_DEV_RFC
+  Source System: <rfc-destination>
 → Check completed: 7 findings
 ```
 
@@ -332,7 +332,7 @@ Quick Fixes for MATNR length extension change declarations from `CHAR(18)` to `C
 
 ### SAP Open Source
 
-- [SAP/abap-atc-cr-cv-s4hc-tools](https://github.com/SAP/abap-atc-cr-cv-s4hc-tools) — Apache-2.0. Official Exemption Migration Tool (`zatc_cloud_rdnss_2_cln_core`) for migrating Cloud Readiness check exemptions to Clean Core checks. Requires SAP_BASIS 7.58+.
+- [SAP/abap-atc-cr-cv-s4hc-tools](https://github.com/SAP/abap-atc-cr-cv-s4hc-tools/blob/b3d58db70a7c5c27467e856b31c7b42d2ad1bac6/docs/cloud-readiness-migration.md) — Apache-2.0. Official Exemption Migration Tool (`zatc_cloud_rdnss_2_cln_core`) for migrating Cloud Readiness check exemptions to Clean Core checks. Requires SAP_BASIS 7.58+.
 
 ### Key Transactions and Programs
 
