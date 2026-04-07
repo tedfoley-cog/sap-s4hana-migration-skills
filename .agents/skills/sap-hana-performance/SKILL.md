@@ -131,7 +131,7 @@ The following sub-steps address the most common ABAP anti-patterns that cause pe
 
 #### Step 4a: Replace SELECT * with explicit field list
 
-HANA column store reads only requested columns. `SELECT *` on wide tables (e.g., `BSEG` with 300+ fields) forces the engine to materialize all columns, wasting memory and network bandwidth ([SAP-samples/abap-cheat-sheets, 32_Performance_Notes.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/main/32_Performance_Notes.md)).
+HANA column store reads only requested columns. `SELECT *` on wide tables (e.g., `BSEG` with 300+ fields) forces the engine to materialize all columns, wasting memory and network bandwidth ([SAP-samples/abap-cheat-sheets, 32_Performance_Notes.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/a79310222d643d9a053a76bae3712e726fb6a880/32_Performance_Notes.md)).
 
 ```abap
 " BEFORE — anti-pattern
@@ -148,7 +148,7 @@ SELECT ebeln, ebelp, matnr, menge, netpr
 
 #### Step 4b: Eliminate nested SELECT in loops
 
-Nested `SELECT` inside a loop causes N+1 database round-trips. On HANA this is especially harmful because each round-trip has higher latency than row-store databases, even though individual queries are fast ([SAP-samples/abap-cheat-sheets, 32_Performance_Notes.md — "Reducing Database Accesses"](https://github.com/SAP-samples/abap-cheat-sheets/blob/main/32_Performance_Notes.md)).
+Nested `SELECT` inside a loop causes N+1 database round-trips. On HANA this is especially harmful because each round-trip has higher latency than row-store databases, even though individual queries are fast ([SAP-samples/abap-cheat-sheets, 32_Performance_Notes.md — "Reducing Database Accesses"](https://github.com/SAP-samples/abap-cheat-sheets/blob/a79310222d643d9a053a76bae3712e726fb6a880/32_Performance_Notes.md)).
 
 ```abap
 " BEFORE — anti-pattern: SELECT in a LOOP
@@ -161,11 +161,13 @@ LOOP AT lt_orders ASSIGNING FIELD-SYMBOL(<order>).
 ENDLOOP.
 
 " AFTER — single bulk read, then in-memory lookup
-SELECT vbeln, posnr, matnr
-  FROM vbap
-  FOR ALL ENTRIES IN @lt_orders
-  WHERE vbeln = @lt_orders-vbeln
-  INTO TABLE @DATA(lt_items).
+IF lt_orders IS NOT INITIAL.
+  SELECT vbeln, posnr, matnr
+    FROM vbap
+    FOR ALL ENTRIES IN @lt_orders
+    WHERE vbeln = @lt_orders-vbeln
+    INTO TABLE @DATA(lt_items).
+ENDIF.
 
 SORT lt_items BY vbeln.
 
@@ -211,7 +213,7 @@ IF lt_eban IS NOT INITIAL.
 ENDIF.
 ```
 
-In modern ABAP (7.50+), prefer joins with internal tables over FAE when possible, as the optimizer can handle them more efficiently on HANA ([SAP-samples/abap-cheat-sheets, 03_ABAP_SQL.md — "FROM Clause"](https://github.com/SAP-samples/abap-cheat-sheets/blob/main/03_ABAP_SQL.md)):
+In modern ABAP (7.50+), prefer joins with internal tables over FAE when possible, as the optimizer can handle them more efficiently on HANA ([SAP-samples/abap-cheat-sheets, 03_ABAP_SQL.md — "FROM Clause"](https://github.com/SAP-samples/abap-cheat-sheets/blob/a79310222d643d9a053a76bae3712e726fb6a880/03_ABAP_SQL.md)):
 
 ```abap
 " MODERN — join with internal table (ABAP 7.53+)
@@ -260,12 +262,12 @@ define view entity ZI_FILineItem
       hsl    as AmountInCompanyCodeCurrency,
       rhcur  as CompanyCodeCurrency
 }
-where rldnr = '0L'
+where rldnr = '0L'.
 ```
 
 #### Step 4e: Push SORT to the database
 
-Sorting large internal tables in ABAP (`SORT itab`) consumes application server memory and CPU. On HANA, the column store can sort at the database level with near-zero additional cost using `ORDER BY` ([SAP-samples/abap-cheat-sheets, 32_Performance_Notes.md — "Applying a Sort Key"](https://github.com/SAP-samples/abap-cheat-sheets/blob/main/32_Performance_Notes.md)).
+Sorting large internal tables in ABAP (`SORT itab`) consumes application server memory and CPU. On HANA, the column store can sort at the database level with near-zero additional cost using `ORDER BY` ([SAP-samples/abap-cheat-sheets, 32_Performance_Notes.md — "Applying a Sort Key"](https://github.com/SAP-samples/abap-cheat-sheets/blob/a79310222d643d9a053a76bae3712e726fb6a880/32_Performance_Notes.md)).
 
 ```abap
 " BEFORE — sort in ABAP
@@ -328,12 +330,12 @@ Preference (highest to lowest):
   4. Avoid SELECT * + ABAP loops — worst case, maximum data transfer
 ```
 
-**When to use CDS views** ([SAP Help: CDS View Entities](https://help.sap.com/docs/ABAP_PLATFORM_NEW/b5670aaaa2364a29935f40b16499972d/4ec5f2306e391014adc9fffe56f91a3e.html)):
+**When to use CDS views** ([SAP Help: CDS View Entities](https://help.sap.com/docs/ABAP_PLATFORM_NEW/b5670aaaa2364a29935f40b16499972d/a264a9abf98d4a7c8090c2db1b5c643e.html)):
 - Joins, aggregations, calculated fields, currency/unit conversions.
 - Replacing custom database views or ABAP Dictionary views.
 - Exposing data for Fiori apps via OData service bindings.
 
-**When to use AMDP** ([SAP-samples/abap-cheat-sheets, 12_AMDP.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/main/12_AMDP.md)):
+**When to use AMDP** ([SAP-samples/abap-cheat-sheets, 12_AMDP.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/a79310222d643d9a053a76bae3712e726fb6a880/12_AMDP.md)):
 - Complex imperative logic (e.g., iterative calculations, cursor-based processing).
 - Graph or spatial processing available in SQLScript but not in CDS.
 - Note: AMDP is harder to unit-test and debug than CDS. Prefer CDS when possible.
@@ -435,7 +437,7 @@ define view entity ZI_OrderHistory
       j.budat   as PostingDate
 }
 where j.rldnr = '0L'
-  and j.koart = 'D'
+  and j.koart = 'D'.
 ```
 
 Refactored ABAP report:
@@ -463,16 +465,16 @@ SELECT CompanyCode, AccountingDocument, FiscalYear, LineItem,
    FAE works well on HANA *when* the driver table is not empty and the result set is bounded. The kernel translates FAE into `IN` lists or temp-table joins depending on the driver table size. The anti-pattern is using FAE without the emptiness guard, not using FAE itself ([SAP Note 1912445](https://me.sap.com/notes/1912445)).
 
 3. **Pushing all logic into AMDP because "pushdown is good"**.
-   AMDP (SQLScript procedures) are harder to test with ABAP Unit, harder to debug in ADT, and not transportable via CTS in all scenarios. CDS view entities are declarative, testable with `CL_CDS_TEST_ENVIRONMENT`, and integrate with RAP. Use AMDP only when CDS cannot express the required logic ([SAP-samples/abap-cheat-sheets, 12_AMDP.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/main/12_AMDP.md)).
+   AMDP (SQLScript procedures) are harder to test with ABAP Unit, harder to debug in ADT, and not transportable via CTS in all scenarios. CDS view entities are declarative, testable with `CL_CDS_TEST_ENVIRONMENT`, and integrate with RAP. Use AMDP only when CDS cannot express the required logic ([SAP-samples/abap-cheat-sheets, 12_AMDP.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/a79310222d643d9a053a76bae3712e726fb6a880/12_AMDP.md)).
 
 4. **Relying on SE30 / SAT results from the source ECC system**.
    Performance characteristics change drastically on HANA. Statements that were fast on row-store (e.g., indexed lookups on `BSEG`) may be slow on column-store, and vice versa. Always reprofile on the HANA target system using SQLM, SRTCM, and the ABAP Profiler in ADT ([SAP Note 2201632](https://me.sap.com/notes/2201632)).
 
 5. **Using SELECT * "because we might need more fields later"**.
-   On HANA column store, each additional column in the SELECT list costs memory for column materialization. Wide tables like `EKPO` (200+ fields), `BSEG` (300+ fields), or `VBAP` (150+ fields) are especially affected. Always specify the exact field list needed for the current use case ([SAP-samples/abap-cheat-sheets, 32_Performance_Notes.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/main/32_Performance_Notes.md)).
+   On HANA column store, each additional column in the SELECT list costs memory for column materialization. Wide tables like `EKPO` (200+ fields), `BSEG` (300+ fields), or `VBAP` (150+ fields) are especially affected. Always specify the exact field list needed for the current use case ([SAP-samples/abap-cheat-sheets, 32_Performance_Notes.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/a79310222d643d9a053a76bae3712e726fb6a880/32_Performance_Notes.md)).
 
 6. **String concatenation in loops without string templates**.
-   Building strings character by character in a loop using `CONCATENATE` creates repeated memory allocations. Use ABAP string templates with `LET` expressions for bulk string construction ([SAP/abap-cleaner rule set](https://github.com/SAP/abap-cleaner)).
+   Building strings character by character in a loop using `CONCATENATE` creates repeated memory allocations. Use ABAP string templates with `LET` expressions for bulk string construction ([SAP/abap-cleaner rule set](https://github.com/SAP/abap-cleaner/tree/952c68076fb0c5a258d947ca269e876d12603190)).
 
 ## References
 
@@ -483,10 +485,10 @@ SELECT CompanyCode, AccountingDocument, FiscalYear, LineItem,
 - [SAP Note 2270407 — Universal Journal (ACDOCA)](https://me.sap.com/notes/2270407): Details on the ACDOCA table replacing BSEG and other cluster tables.
 - [SAP Custom Code Migration Guide for S/4HANA 2025 FPS01](https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE): Canonical runbook covering SQL Monitor, SRTCM, code pushdown, and performance optimization sections.
 - [SAP Help: ABAP Platform — Performance Notes](https://help.sap.com/docs/ABAP_PLATFORM_NEW/b5670aaaa2364a29935f40b16499972d/4ec5f2306e391014adc9fffe56f91a3e.html): Official ABAP platform documentation on database access optimization.
-- [SAP Help: CDS View Entities](https://help.sap.com/docs/ABAP_PLATFORM_NEW/b5670aaaa2364a29935f40b16499972d/4ec5f2306e391014adc9fffe56f91a3e.html): Documentation on CDS view entity syntax and capabilities.
+- [SAP Help: CDS View Entities](https://help.sap.com/docs/ABAP_PLATFORM_NEW/b5670aaaa2364a29935f40b16499972d/a264a9abf98d4a7c8090c2db1b5c643e.html): Documentation on CDS view entity syntax and capabilities.
 - [SAP Help: DBA Cockpit (ST04)](https://help.sap.com/docs/ABAP_PLATFORM_NEW/b5670aaaa2364a29935f40b16499972d/48b5d6014f18307de10000000a42189b.html): HANA-specific expensive statement analysis via DBA Cockpit.
-- [SAP-samples/abap-cheat-sheets — 03_ABAP_SQL.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/main/03_ABAP_SQL.md): Modern ABAP SQL syntax patterns including joins with internal tables and typed literals (Apache-2.0).
-- [SAP-samples/abap-cheat-sheets — 12_AMDP.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/main/12_AMDP.md): ABAP Managed Database Procedures reference and best practices (Apache-2.0).
-- [SAP-samples/abap-cheat-sheets — 15_CDS_View_Entities.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/main/15_CDS_View_Entities.md): CDS view entity syntax, annotations, and associations (Apache-2.0).
-- [SAP-samples/abap-cheat-sheets — 32_Performance_Notes.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/main/32_Performance_Notes.md): ABAP performance notes covering database access and internal table optimization (Apache-2.0).
-- [SAP/abap-cleaner](https://github.com/SAP/abap-cleaner): Automated ABAP code cleanup rules, many aligned with HANA performance patterns (Apache-2.0).
+- [SAP-samples/abap-cheat-sheets — 03_ABAP_SQL.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/a79310222d643d9a053a76bae3712e726fb6a880/03_ABAP_SQL.md): Modern ABAP SQL syntax patterns including joins with internal tables and typed literals (Apache-2.0).
+- [SAP-samples/abap-cheat-sheets — 12_AMDP.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/a79310222d643d9a053a76bae3712e726fb6a880/12_AMDP.md): ABAP Managed Database Procedures reference and best practices (Apache-2.0).
+- [SAP-samples/abap-cheat-sheets — 15_CDS_View_Entities.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/a79310222d643d9a053a76bae3712e726fb6a880/15_CDS_View_Entities.md): CDS view entity syntax, annotations, and associations (Apache-2.0).
+- [SAP-samples/abap-cheat-sheets — 32_Performance_Notes.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/a79310222d643d9a053a76bae3712e726fb6a880/32_Performance_Notes.md): ABAP performance notes covering database access and internal table optimization (Apache-2.0).
+- [SAP/abap-cleaner](https://github.com/SAP/abap-cleaner/tree/952c68076fb0c5a258d947ca269e876d12603190): Automated ABAP code cleanup rules, many aligned with HANA performance patterns (Apache-2.0).
