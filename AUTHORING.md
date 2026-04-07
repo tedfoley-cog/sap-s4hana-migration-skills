@@ -8,7 +8,6 @@ Skills live at `.agents/skills/<skill-name>/SKILL.md`. The directory name MUST m
 
 Supporting reference files go under `.agents/skills/<skill-name>/references/<topic>.md`.
 
-
 ## 2. Frontmatter schema (required)
 
 ```yaml

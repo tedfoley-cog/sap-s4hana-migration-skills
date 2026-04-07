@@ -25,7 +25,7 @@ sap-skills-project/
         ├── docs/
         │   ├── installation-devin.md
         │   └── sources.md
-        └── .github/workflows/validate.yml  # CI: validate + enforce mirror in sync
+        └── .github/workflows/validate.yml  # CI: validate skills
 ```
 
 The scaffold has one commit on its local `main` branch. `.git` is included so the next session can push it.
