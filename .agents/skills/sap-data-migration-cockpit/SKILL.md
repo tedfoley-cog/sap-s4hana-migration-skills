@@ -11,7 +11,7 @@ description: |
   or deciding between greenfield file-upload and brownfield direct-transfer approaches.
 license: Apache-2.0
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
   last_verified: "2026-04-07"
   s4hana_release: "2023, 2024, 2025, 2025 FPS01"
   sources:
@@ -24,7 +24,10 @@ metadata:
     - "SAP Community blog by Mickael Quesnot: Tutorial — Using the SAP S/4HANA Migration Cockpit App (February 2025)"
     - "SAP-samples/s4hana-mc-xml-file-splitter (GitHub)"
     - "openSAP course: Data Migration to SAP S/4HANA"
+    - "SAP CAP cds-dk (https://cap.cloud.sap/docs/tools/cds-cli)"
+    - "SAP HANA Client hdbsql (https://help.sap.com/docs/hana/sap-hana-client-interface-programming-reference)"
 related_skills:
+  - sap-cli-toolbelt
   - sap-functional-simplifications
   - sap-migration-testing
 ---
@@ -204,6 +207,48 @@ After execution completes:
 2. Run end-to-end business process tests against the migrated data (see `sap-migration-testing`).
 3. Verify record counts match between source and target.
 4. Check that dependent data relationships are intact (e.g., BP ↔ Customer/Vendor linkage via CVI).
+
+
+### CLI usage
+
+Use `cds` for BTP-side ETL extensions that feed the Migration Cockpit, and `hdbsql` for target-side data validation.
+
+**Environment variables**:
+- `HANA_HOST`, `HANA_USER`, `HANA_PASSWORD` (for hdbsql)
+
+**Network prerequisites**: HANA port 443 (Cloud) or 3\<sysnr\>15 (on-prem).
+
+```bash
+# Initialize a CAP project for a migration data transformation service
+cds init migration-etl --add hana
+
+# Define a CDS entity for staging migration data
+cat > db/schema.cds << 'EOF'
+namespace migration;
+entity StagedCustomers {
+  key ID         : UUID;
+      legacyID   : String(10);
+      name       : String(80);
+      country    : String(3);
+      bpCategory : String(1);  // 1=Org, 2=Person
+}
+EOF
+
+# Deploy the staging model to HANA
+cds deploy --to hana
+
+# After migration execution, validate record counts on the target
+hdbsql -n "${HANA_HOST}:443" -u "${HANA_USER}" -p "${HANA_PASSWORD}" -encrypt \
+  "SELECT COUNT(*) AS bp_count FROM BUT000 WHERE BU_GROUP = 'Z001'"
+
+# Spot-check CVI linkage integrity
+hdbsql -n "${HANA_HOST}:443" -u "${HANA_USER}" -p "${HANA_PASSWORD}" -encrypt \
+  "SELECT COUNT(*) AS linked FROM CVI_CUST_LINK"
+```
+
+The CAP-based ETL approach lets Devin build transformation logic that feeds XML templates to the Migration Cockpit, while `hdbsql` queries validate that migrated data landed correctly ([CAP docs](https://cap.cloud.sap/docs/tools/cds-cli), [SAP Help: hdbsql](https://help.sap.com/docs/hana/sap-hana-client-interface-programming-reference)).
+
+> **Cross-reference**: For a full catalog of CLIs available in the Devin sandbox, see skill `sap-cli-toolbelt`.
 
 ## Worked example
 

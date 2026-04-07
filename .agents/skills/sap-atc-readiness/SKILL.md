@@ -13,7 +13,7 @@ description: |
   successive readiness runs.
 license: Apache-2.0
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
   last_verified: "2026-04-07"
   s4hana_release: "2023, 2024, 2025, 2025 FPS01"
   sources:
@@ -24,11 +24,18 @@ metadata:
     - "SAP Note 2270689 - Simplification Database loading"
     - "SAP Help Portal - ABAP Test Cockpit"
     - "SAP/abap-atc-cr-cv-s4hc-tools on GitHub"
+    - "sapcli — ADT command-line client (https://github.com/jfilak/sapcli)"
 related_skills:
+  - sap-clean-core-extensibility
+  - sap-cli-toolbelt
+  - sap-functional-simplifications
+  - sap-hana-performance
+  - sap-migration-testing
+  - sap-modern-abap-rewrite
   - sap-scoping
   - sap-simplification-database
   - sap-spdd-spau
-  - sap-modern-abap-rewrite
+  - sap-sum-dmo
 ---
 
 ## When to use this skill
@@ -216,6 +223,37 @@ Delta worklists compare two successive ATC runs to show remediation progress ([S
    - **New findings**: Findings introduced by code changes since the last run.
    - **Remaining findings**: Findings that still require attention.
 4. Use the cleared/remaining ratio to report progress to project stakeholders.
+
+
+### CLI usage
+
+`sapcli` can drive ATC check runs from the command line, enabling scripted readiness assessments without SAP GUI access.
+
+**Environment variables**: `SAP_URL`, `SAP_CLIENT`, `SAP_USER`, `SAP_PASSWORD`
+
+**Network prerequisites**: SAP system HTTPS port (typically 443 or 44300).
+
+```bash
+# Run the S/4HANA readiness check variant against a package
+sapcli atc run --variant S4HANA_READINESS_2025 '$Z_CUSTOM_PKG' --output json > atc_results.json
+
+# Parse the JSON results — count findings by priority
+python3 -c "
+import json, collections
+data = json.load(open('atc_results.json'))
+findings = data.get('findings', [])
+counts = collections.Counter(f.get('priority', 'unknown') for f in findings)
+for prio, count in sorted(counts.items()):
+    print(f'Priority {prio}: {count} findings')
+"
+
+# Run against a specific object list (transport-based scope)
+sapcli atc run --variant S4HANA_READINESS_2025 --objects zcl_customer_helper zcl_vendor_api --output json
+```
+
+This integrates directly with the delta worklist workflow (Step 8) — re-run after remediation to produce a diff of cleared vs. remaining findings ([sapcli README](https://github.com/jfilak/sapcli)).
+
+> **Cross-reference**: For a full catalog of CLIs available in the Devin sandbox, see skill `sap-cli-toolbelt`.
 
 ## Worked example
 

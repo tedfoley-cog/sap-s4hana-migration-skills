@@ -11,7 +11,7 @@ description: |
   api.sap.com or in ADT; or running Clean Core ATC check variant ABAP_CLOUD_READINESS.
 license: Apache-2.0
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
   last_verified: "2026-04-07"
   s4hana_release: "2023, 2024, 2025"
   sources:
@@ -23,10 +23,19 @@ metadata:
     - "SAP API Business Hub (api.sap.com)"
     - "Karl Kessler — SAP Community blog series on Clean Core"
     - "SAP Custom Code Migration Guide for S/4HANA 2025 FPS01"
+    - "SAP BTP CLI btp (https://help.sap.com/docs/btp/sap-business-technology-platform/account-administration-using-sap-btp-command-line-interface-btp-cli)"
+    - "Cloud Foundry CLI cf (https://docs.cloudfoundry.org/cf-cli/)"
+    - "SAP CAP cds-dk (https://cap.cloud.sap/docs/tools/cds-cli)"
+    - "SAP Cloud MTA Build Tool mbt (https://sap.github.io/cloud-mta-build-tool/)"
+    - "SAP Cloud SDK generator (https://sap.github.io/cloud-sdk/)"
 related_skills:
-  - sap-modern-abap-rewrite
-  - sap-functional-simplifications
   - sap-atc-readiness
+  - sap-cli-toolbelt
+  - sap-fiori-activation
+  - sap-functional-simplifications
+  - sap-hana-performance
+  - sap-modern-abap-rewrite
+  - sap-scoping
 ---
 
 ## When to use this skill
@@ -174,6 +183,46 @@ When converting from ECC, custom objects typically fall into these categories:
 | RFC function module (non-released) | Replace with a released OData service (C2 contract) for remote consumption, or a released ABAP API (C1) for on-stack usage. |
 
 Use the **Exemption Migration Tool** from `SAP/abap-atc-cr-cv-s4hc-tools` to migrate existing ATC exemptions from the legacy ABAP Cloud Readiness check to the new Clean Core checks ([SAP/abap-atc-cr-cv-s4hc-tools](https://github.com/SAP/abap-atc-cr-cv-s4hc-tools)).
+
+
+### CLI usage
+
+BTP-side extensibility uses several CLIs for provisioning, building, and deploying side-by-side applications.
+
+**Environment variables**:
+- `BTP_USERNAME`, `BTP_PASSWORD`, `BTP_SUBDOMAIN` (for btp CLI)
+- `CF_API_ENDPOINT`, `CF_ORG`, `CF_SPACE` (for cf CLI)
+
+**Network prerequisites**: `cli.btp.cloud.sap:443`, BTP CF API endpoint:443.
+
+```bash
+# Authenticate to BTP and target the subaccount
+btp login --url https://cli.btp.cloud.sap --subdomain "${BTP_SUBDOMAIN}" \
+  --user "${BTP_USERNAME}" --password "${BTP_PASSWORD}"
+
+# Authenticate to Cloud Foundry
+cf login -a "${CF_API_ENDPOINT}" -u "${BTP_USERNAME}" -p "${BTP_PASSWORD}" \
+  -o "${CF_ORG}" -s "${CF_SPACE}"
+
+# Initialize a new CAP project for a side-by-side extension
+cds init my-s4-extension --add hana,approuter
+
+# Import an S/4HANA OData service for consumption
+cds import ./API_BUSINESS_PARTNER.edmx --as external-service
+
+# Generate a typed OData client from EDMX metadata
+generate-odata-client --inputDir ./edmx --outputDir ./generated --useSwagger
+
+# Build an MTA archive for deployment
+mbt build -t ./dist
+
+# Deploy the MTA archive to Cloud Foundry
+cf deploy ./dist/my-s4-extension_1.0.0.mtar
+```
+
+These CLIs cover the full lifecycle of a side-by-side BTP extension: scaffold → import → build → deploy ([btp CLI docs](https://help.sap.com/docs/btp/sap-business-technology-platform/account-administration-using-sap-btp-command-line-interface-btp-cli), [CAP docs](https://cap.cloud.sap/docs/tools/cds-cli), [Cloud SDK](https://sap.github.io/cloud-sdk/)).
+
+> **Cross-reference**: For a full catalog of CLIs available in the Devin sandbox, see skill `sap-cli-toolbelt`.
 
 ## Worked example
 

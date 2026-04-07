@@ -12,7 +12,7 @@ description: |
   or planning cutover downtime windows for brownfield S/4HANA conversions.
 license: Apache-2.0
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
   last_verified: "2026-04-07"
   s4hana_release: "2023, 2024, 2025 FPS01"
   sources:
@@ -27,10 +27,12 @@ metadata:
     - "Database Migration Option: Target Database SAP HANA (SUM DMO Guide, help.sap.com)"
     - "Maintenance Planner (maintenanceplanner.cloud.sap)"
 related_skills:
-  - sap-spdd-spau
   - sap-atc-readiness
+  - sap-cli-toolbelt
+  - sap-fiori-activation
   - sap-functional-simplifications
   - sap-migration-testing
+  - sap-spdd-spau
 ---
 
 # SUM/DMO System Conversion Playbook
@@ -153,6 +155,19 @@ Is this a new SAP implementation (no existing data)?
 26. **Before SUM start**: Take a full database backup and file system backup of `/usr/sap/<SID>` and the SUM directory. This is your primary rollback path.
 27. **Before downtime (Phase 6)**: Take another incremental backup. If the conversion fails during downtime but before activation, SUM provides a **controlled rollback** via the SUM GUI's "Reset" option that reverts the shadow import.
 28. **After activation (step 17)**: Rollback is only possible by **restoring the full backup** taken before SUM start. The activation step is irreversible within SUM. Plan the backup/restore procedure and validate the restore time before the production cutover ([SUM Guide](https://help.sap.com/doc/08e459b0d229498fb74efe7e3bb401a0/Latest/en-US/convsum20.latest.pdf)).
+
+
+### CLI usage
+
+> **No CLI for SUM itself.** The Software Update Manager (SUM) runs as an interactive web-based tool on the target SAP host (port 1128/1129). It requires OS-level access to the SAP application server and cannot be driven from a remote Devin sandbox. The SUM binary (`STARTUP`) is executed locally on the server, not via a network CLI ([SUM Guide](https://help.sap.com/doc/08e459b0d229498fb74efe7e3bb401a0/Latest/en-US/convsum20.latest.pdf)).
+
+Devin's role for this skill is **advisory**: generating runbook steps, validating Maintenance Planner stack files, and documenting cutover plans. For CLI-assisted pre-checks and post-conversion validation, see the sibling skills:
+
+- `sap-atc-readiness` — `sapcli atc run` for pre-conversion custom code checks
+- `sap-hana-performance` — `hdbsql` for post-conversion performance queries
+- `sap-migration-testing` — `sapcli aunit run` for post-conversion unit test execution
+
+> **Cross-reference**: For a full catalog of CLIs available in the Devin sandbox, see skill `sap-cli-toolbelt`.
 
 ## Worked example
 

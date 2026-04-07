@@ -10,7 +10,7 @@ description: |
   performance issues with report RDDIT076 or RDDIT077 during large worklists.
 license: Apache-2.0
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
   last_verified: "2026-04-07"
   s4hana_release: "2023, 2024, 2025, 2025 FPS01"
   sources:
@@ -21,10 +21,15 @@ metadata:
     - "SAP Help Portal - Modification and Enhancement Adjustment Planning (SL Toolset)"
     - "SAP Community - Understanding the need of SPDD, SPAU & SPAU_ENH (patil477pavan, 2020)"
     - "SAP Community - SPDD and SPAU Phases during S/4 HANA Migration (Shakeel_Ahmed1, 2018)"
+    - "sapcli — ADT command-line client (https://github.com/jfilak/sapcli)"
+    - "SAP/abap-cleaner (https://github.com/SAP/abap-cleaner)"
 related_skills:
-  - sap-sum-dmo
   - sap-atc-readiness
+  - sap-cli-toolbelt
   - sap-functional-simplifications
+  - sap-migration-testing
+  - sap-simplification-database
+  - sap-sum-dmo
 ---
 
 ## When to use this skill
@@ -190,6 +195,34 @@ For systems with a large number of modifications (500+), SPDD and SPAU processin
 2. Increase the dialog work process timeout (`rdisp/max_wprun_time`) temporarily during the SPDD phase if adjustments take longer than the default timeout.
 3. Process SPAU objects in batches by filtering on package or object type rather than loading the entire worklist at once.
 4. If `RDDIT076` or `RDDIT077` time out during pre-conversion scoping, run them in background mode (`SM37`) with a spool output.
+
+
+### CLI usage
+
+Use `sapcli` to download modified objects for offline review and `abap-cleaner` for post-adjustment cleanup.
+
+**Environment variables**:
+- `SAP_URL`, `SAP_CLIENT`, `SAP_USER`, `SAP_PASSWORD` (for sapcli)
+
+**Network prerequisites**: SAP HTTPS port (typically 443 or 44300).
+
+```bash
+# Download a modified program for offline diff / review
+sapcli checkout program sapmm06e --output-dir ./spau-review
+
+# After SPAU adjustment, clean up the adjusted source with abap-cleaner
+java -jar abap-cleaner.jar \
+  --sourcefile ./spau-review/sapmm06e.abap \
+  --targetfile ./spau-review/sapmm06e_cleaned.abap \
+  --profile profiles/team-profile.cfg
+
+# Compare the cleaned output against the adjusted version
+diff -u ./spau-review/sapmm06e.abap ./spau-review/sapmm06e_cleaned.abap
+```
+
+This workflow lets Devin assist with SPAU review by downloading, cleaning, and diffing objects without requiring SAP GUI access ([sapcli README](https://github.com/jfilak/sapcli), [abap-cleaner](https://github.com/SAP/abap-cleaner)).
+
+> **Cross-reference**: For a full catalog of CLIs available in the Devin sandbox, see skill `sap-cli-toolbelt`.
 
 ## Worked example
 

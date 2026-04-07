@@ -12,7 +12,7 @@ description: |
   for Business Partner).
 license: Apache-2.0
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
   last_verified: "2026-04-07"
   s4hana_release: "2023, 2024, 2025"
   sources:
@@ -28,8 +28,11 @@ metadata:
     - "SAP Help Portal — Setting Up and Performing SAP S/4HANA Custom Code Checks"
     - "Simplification Item Catalog (launchpad.support.sap.com/#/sic)"
     - "SAP Community — Olga Dolinskaja, Custom code adaptation for SAP S/4HANA FAQ"
+    - "sapcli — ADT command-line client (https://github.com/jfilak/sapcli)"
+    - "SAP HANA Client hdbsql (https://help.sap.com/docs/hana/sap-hana-client-interface-programming-reference)"
 related_skills:
   - sap-atc-readiness
+  - sap-cli-toolbelt
   - sap-functional-simplifications
   - sap-spdd-spau
 ---
@@ -179,6 +182,33 @@ Not all simplification items apply to all deployment models. When planning the c
    - **Cloud Public Edition** — the most restrictive; many customization-related items are replaced by clean-core extensibility patterns.
 2. In `/SDF/RC_START_CHECK`, the deployment model is set automatically based on the system's license type, but verify this in the check parameters.
 3. When mapping ATC findings, confirm the deployment model filter matches your project's target — a simplification item flagged "Cloud Public Edition only" is irrelevant for an On-Premise conversion.
+
+
+### CLI usage
+
+Use `sapcli` for source-level diffing and `hdbsql` for table existence checks when investigating simplification items.
+
+**Environment variables**:
+- `SAP_URL`, `SAP_CLIENT`, `SAP_USER`, `SAP_PASSWORD` (for sapcli)
+- `HANA_HOST`, `HANA_USER`, `HANA_PASSWORD` (for hdbsql)
+
+**Network prerequisites**: SAP HTTPS port + HANA port 443 (Cloud) or 3\<sysnr\>15 (on-prem).
+
+```bash
+# Download the source of a custom object that references a deprecated table
+sapcli checkout class zcl_stock_report
+
+# Diff the downloaded source against a previous version
+diff -u ./zcl_stock_report_old.abap ./zcl_stock_report.abap
+
+# Verify whether a table still exists on HANA (useful for S031-S039 checks)
+hdbsql -n "${HANA_HOST}:443" -u "${HANA_USER}" -p "${HANA_PASSWORD}" -encrypt \
+  "SELECT TABLE_NAME FROM SYS.TABLES WHERE SCHEMA_NAME='SAPHANADB' AND TABLE_NAME='S031'"
+```
+
+If the query returns zero rows, the aggregate table has been removed and custom code referencing it must be remediated per the simplification item ([SAP Help: hdbsql](https://help.sap.com/docs/hana/sap-hana-client-interface-programming-reference)).
+
+> **Cross-reference**: For a full catalog of CLIs available in the Devin sandbox, see skill `sap-cli-toolbelt`.
 
 ## Worked example
 
