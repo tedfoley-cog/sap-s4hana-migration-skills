@@ -87,7 +87,7 @@ Is the target a Tier-1 (ABAP Cloud) software component?
 
 ### 1. Extract FORM routines and INCLUDEs to class methods
 
-FORM routines and INCLUDE programs cannot be unit-tested in isolation and are forbidden in ABAP Cloud ([SAP-samples/abap-cheat-sheets: 19_ABAP_for_Cloud_Development.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/main/19_ABAP_for_Cloud_Development.md)). Convert them to static or instance methods on a class.
+FORM routines and INCLUDE programs cannot be unit-tested in isolation and are forbidden in ABAP Cloud ([SAP-samples/abap-cheat-sheets: 19_ABAP_for_Cloud_Development.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/a79310222d643d9a053a76bae3712e726fb6a880/19_ABAP_for_Cloud_Development.md)). Convert them to static or instance methods on a class.
 
 **Before:**
 ```abap
@@ -127,7 +127,7 @@ CLASS zcl_invoice_builder IMPLEMENTATION.
 ENDCLASS.
 ```
 
-Key changes: `FORM` -> static `METHOD`; `CHANGING` -> `RETURNING`; loop + append -> `VALUE #( FOR ... )` constructor expression ([SAP-samples/abap-cheat-sheets: 05_Constructor_Expressions.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/main/05_Constructor_Expressions.md)).
+Key changes: `FORM` -> static `METHOD`; `CHANGING` -> `RETURNING`; loop + append -> `VALUE #( FOR ... )` constructor expression ([SAP-samples/abap-cheat-sheets: 05_Constructor_Expressions.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/a79310222d643d9a053a76bae3712e726fb6a880/05_Constructor_Expressions.md)).
 
 ### 2. Run abap-cleaner for automated fixes
 
@@ -148,13 +148,13 @@ The [ABAP cleaner](https://github.com/SAP/abap-cleaner) tool automates ~100 clea
 | Omit RECEIVING | Replaces `RECEIVING` with inline assignment |
 | Use FINAL for immutable variables | `DATA(lv_x) = 5.` -> `FINAL(lv_x) = 5.` (ABAP 7.57+) |
 
-([SAP/abap-cleaner: docs/rules.md](https://github.com/SAP/abap-cleaner/blob/main/docs/rules.md))
+([SAP/abap-cleaner: docs/rules.md](https://github.com/SAP/abap-cleaner/blob/952c68076fb0c5a258d947ca269e876d12603190/docs/rules.md))
 
 **Usage in ADT:** `Ctrl+Shift+4` (interactive) or `Ctrl+4` (automated). Always review the diff before saving — abap-cleaner cannot detect dynamic call sites that may break if signatures change.
 
 ### 3. Replace READ TABLE with table expressions
 
-Table expressions (available since ABAP 7.40 SP05) are more concise and raise `CX_SY_ITAB_LINE_NOT_FOUND` instead of setting `SY-SUBRC` ([SAP-samples/abap-cheat-sheets: 01_Internal_Tables.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/main/01_Internal_Tables.md)).
+Table expressions (available since ABAP 7.40 SP05) are more concise and raise `CX_SY_ITAB_LINE_NOT_FOUND` instead of setting `SY-SUBRC` ([SAP-samples/abap-cheat-sheets: 01_Internal_Tables.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/a79310222d643d9a053a76bae3712e726fb6a880/01_Internal_Tables.md)).
 
 **Before:**
 ```abap
@@ -186,11 +186,11 @@ ENDTRY.
 DATA(ls_partner) = VALUE #( lt_partners[ partner_id = lv_id ] OPTIONAL ).
 ```
 
-The `OPTIONAL` addition returns an initial structure if the line is not found, avoiding both `SY-SUBRC` and exceptions ([SAP-samples/abap-cheat-sheets: 05_Constructor_Expressions.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/main/05_Constructor_Expressions.md)).
+The `OPTIONAL` addition returns an initial structure if the line is not found, avoiding both `SY-SUBRC` and exceptions ([SAP-samples/abap-cheat-sheets: 05_Constructor_Expressions.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/a79310222d643d9a053a76bae3712e726fb6a880/05_Constructor_Expressions.md)).
 
 ### 4. Use string templates instead of CONCATENATE
 
-String templates (`|...|`) support embedded expressions and formatting options. They are available since ABAP 7.02 ([SAP-samples/abap-cheat-sheets: 07_String_Processing.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/main/07_String_Processing.md)).
+String templates (`|...|`) support embedded expressions and formatting options. They are available since ABAP 7.02 ([SAP-samples/abap-cheat-sheets: 07_String_Processing.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/a79310222d643d9a053a76bae3712e726fb6a880/07_String_Processing.md)).
 
 **Before:**
 ```abap
@@ -204,11 +204,11 @@ CONCATENATE 'Order' lv_order_id 'has' lv_count 'items, total:'
 DATA(lv_msg) = |Order { lv_order_id } has { lv_count } items, total: { lv_amount CURRENCY = lv_waers }|.
 ```
 
-The abap-cleaner rule "Use string templates to assemble text" automates this transformation ([SAP/abap-cleaner: docs/rules/StringTemplateRule.md](https://github.com/SAP/abap-cleaner/blob/main/docs/rules/StringTemplateRule.md)).
+The abap-cleaner rule "Use string templates to assemble text" automates this transformation ([SAP/abap-cleaner: docs/rules/StringTemplateRule.md](https://github.com/SAP/abap-cleaner/blob/952c68076fb0c5a258d947ca269e876d12603190/docs/rules/StringTemplateRule.md)).
 
 ### 5. Use constructor expressions (VALUE, NEW, CORRESPONDING, REDUCE, FILTER)
 
-Constructor expressions replace verbose multi-statement patterns with single expressions. They were introduced across ABAP 7.40–7.50 ([SAP-samples/abap-cheat-sheets: 05_Constructor_Expressions.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/main/05_Constructor_Expressions.md)).
+Constructor expressions replace verbose multi-statement patterns with single expressions. They were introduced across ABAP 7.40–7.50 ([SAP-samples/abap-cheat-sheets: 05_Constructor_Expressions.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/a79310222d643d9a053a76bae3712e726fb6a880/05_Constructor_Expressions.md)).
 
 **VALUE — build structures and tables inline:**
 ```abap
@@ -263,7 +263,7 @@ DATA(lv_text) = SWITCH string( lv_status
 
 ### 6. Use inline declarations and modern loop patterns
 
-**Inline DATA declarations** (ABAP 7.40 SP02) eliminate the need to pre-declare local variables at method top ([SAP-samples/abap-cheat-sheets: 16_Data_Types_and_Objects.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/main/16_Data_Types_and_Objects.md)):
+**Inline DATA declarations** (ABAP 7.40 SP02) eliminate the need to pre-declare local variables at method top ([SAP-samples/abap-cheat-sheets: 16_Data_Types_and_Objects.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/a79310222d643d9a053a76bae3712e726fb6a880/16_Data_Types_and_Objects.md)):
 
 ```abap
 " Before
@@ -280,7 +280,7 @@ DATA(lv_count) = lines( lt_items ).
 FINAL(lv_timestamp) = utclong_current( ).
 ```
 
-The abap-cleaner rule "Use FINAL for immutable variables" can detect candidates automatically ([SAP/abap-cleaner: docs/rules.md](https://github.com/SAP/abap-cleaner/blob/main/docs/rules.md)).
+The abap-cleaner rule "Use FINAL for immutable variables" can detect candidates automatically ([SAP/abap-cleaner: docs/rules.md](https://github.com/SAP/abap-cleaner/blob/952c68076fb0c5a258d947ca269e876d12603190/docs/rules.md)).
 
 **LOOP AT ... REFERENCE INTO** avoids copying large structures:
 ```abap
@@ -302,7 +302,7 @@ DATA(lt_ids) = VALUE zt_id_tab(
 
 ### 7. Add ABAP Unit tests
 
-Every modernized class should have at least one ABAP Unit test class. ABAP Unit is the built-in xUnit framework available since NetWeaver 7.0 ([SAP-samples/abap-cheat-sheets: 14_ABAP_Unit_Tests.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/main/14_ABAP_Unit_Tests.md)).
+Every modernized class should have at least one ABAP Unit test class. ABAP Unit is the built-in xUnit framework available since NetWeaver 7.0 ([SAP-samples/abap-cheat-sheets: 14_ABAP_Unit_Tests.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/a79310222d643d9a053a76bae3712e726fb6a880/14_ABAP_Unit_Tests.md)).
 
 ```abap
 CLASS ltcl_invoice_builder DEFINITION FINAL
@@ -334,7 +334,7 @@ CLASS ltcl_invoice_builder IMPLEMENTATION.
 ENDCLASS.
 ```
 
-Key assertion methods: `assert_equals`, `assert_initial`, `assert_not_initial`, `assert_true`, `assert_false`, `assert_subrc`, `fail` ([SAP-samples/abap-cheat-sheets: 14_ABAP_Unit_Tests.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/main/14_ABAP_Unit_Tests.md)).
+Key assertion methods: `assert_equals`, `assert_initial`, `assert_not_initial`, `assert_true`, `assert_false`, `assert_subrc`, `fail` ([SAP-samples/abap-cheat-sheets: 14_ABAP_Unit_Tests.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/a79310222d643d9a053a76bae3712e726fb6a880/14_ABAP_Unit_Tests.md)).
 
 For dependencies (database, RFC, authority checks), use **test doubles** via `CL_OSQL_TEST_ENVIRONMENT` (SQL), `CL_ABAP_TESTDOUBLE` (interfaces), or manual test seams.
 
@@ -344,13 +344,13 @@ If the target software component uses **ABAP language version "ABAP for Cloud De
 
 | Forbidden in ABAP Cloud | Replacement |
 |---|---|
-| Direct DB access to non-released tables (e.g., `SELECT FROM bkpf`) | Use released CDS views or APIs. Check released objects via `CL_ABAP_CLOUD` or in ADT under "Released Objects" ([SAP-samples/abap-cheat-sheets: 19_ABAP_for_Cloud_Development.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/main/19_ABAP_for_Cloud_Development.md)). |
+| Direct DB access to non-released tables (e.g., `SELECT FROM bkpf`) | Use released CDS views or APIs. Check released objects via `CL_ABAP_CLOUD` or in ADT under "Released Objects" ([SAP-samples/abap-cheat-sheets: 19_ABAP_for_Cloud_Development.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/a79310222d643d9a053a76bae3712e726fb6a880/19_ABAP_for_Cloud_Development.md)). |
 | Classic function modules (`CALL FUNCTION`) | Use released APIs or wrapper classes. |
 | Dynamic SQL (`GENERATE SUBROUTINE POOL`, native SQL via `EXEC SQL`) | Use ABAP SQL with `@`-escaped host variables exclusively. |
 | `FORM` / `PERFORM` | Class methods. |
 | Non-released SAP classes/interfaces | Check the released object list; use `IF_<released_interface>`. |
 | Classic dynpro (`CALL SCREEN`, `MODULE ... INPUT/OUTPUT`) | SAP Fiori / RAP-based UIs. |
-| Classic reports with `WRITE` / selection screens (`PARAMETERS`, `SELECT-OPTIONS`) | RAP-based apps or `CL_SALV_*` for display ([SAP-samples/abap-cheat-sheets: 20_Selection_Screens_Lists.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/main/20_Selection_Screens_Lists.md)). |
+| Classic reports with `WRITE` / selection screens (`PARAMETERS`, `SELECT-OPTIONS`) | RAP-based apps or `CL_SALV_*` for display ([SAP-samples/abap-cheat-sheets: 20_Selection_Screens_Lists.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/a79310222d643d9a053a76bae3712e726fb6a880/20_Selection_Screens_Lists.md)). |
 
 **`@`-escaped host variables** are mandatory in ABAP Cloud for all ABAP SQL statements. They are also best practice in standard ABAP from 7.40 SP05 onward (strict mode):
 
@@ -370,7 +370,7 @@ To migrate existing ATC exemptions from the classic ABAP Cloud Readiness check t
 
 ### 9. Replace exception handling with CX_* classes
 
-Legacy code uses `SY-SUBRC` checks after every function call. Modern ABAP uses class-based exceptions (`CX_STATIC_CHECK`, `CX_DYNAMIC_CHECK`, `CX_NO_CHECK`) which propagate automatically and carry structured error information ([SAP-samples/abap-cheat-sheets: 27_Exceptions.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/main/27_Exceptions.md)).
+Legacy code uses `SY-SUBRC` checks after every function call. Modern ABAP uses class-based exceptions (`CX_STATIC_CHECK`, `CX_DYNAMIC_CHECK`, `CX_NO_CHECK`) which propagate automatically and carry structured error information ([SAP-samples/abap-cheat-sheets: 27_Exceptions.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/a79310222d643d9a053a76bae3712e726fb6a880/27_Exceptions.md)).
 
 **Before:**
 ```abap
@@ -473,7 +473,7 @@ rt_invoices = VALUE #(
     gross_amount   = lv_net * ( 1 + gc_tax_rate ) ) ).
 ```
 
-This uses `FOR` iteration, `LET` for intermediate values, `COND` for conditional assignment, and string templates — all in a single expression ([SAP-samples/abap-cheat-sheets: 05_Constructor_Expressions.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/main/05_Constructor_Expressions.md)).
+This uses `FOR` iteration, `LET` for intermediate values, `COND` for conditional assignment, and string templates — all in a single expression ([SAP-samples/abap-cheat-sheets: 05_Constructor_Expressions.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/a79310222d643d9a053a76bae3712e726fb6a880/05_Constructor_Expressions.md)).
 
 #### Step 4 — Replace CONCATENATE with string templates
 
@@ -547,7 +547,7 @@ ENDCLASS.
 
 2. **Mass-applying abap-cleaner without per-file review.** The abap-cleaner tool is safe for most transformations, but it cannot detect dynamic call sites. For example, if code dynamically calls `CALL METHOD (lv_class_name)=>(lv_method_name)`, renaming or restructuring that method may break the caller silently. Always review changes in the interactive mode (`Ctrl+Shift+4`) before applying ([SAP/abap-cleaner README](https://github.com/SAP/abap-cleaner)).
 
-3. **Mixing ABAP Cloud and classic ABAP in the same software component.** The ABAP language version is set at the software component level. If you assign Tier-1 (ABAP Cloud) to a component, all objects in it must comply with the restricted language scope. Do not partially modernize — either the entire component is ABAP Cloud or it is not ([SAP-samples/abap-cheat-sheets: 19_ABAP_for_Cloud_Development.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/main/19_ABAP_for_Cloud_Development.md)).
+3. **Mixing ABAP Cloud and classic ABAP in the same software component.** The ABAP language version is set at the software component level. If you assign Tier-1 (ABAP Cloud) to a component, all objects in it must comply with the restricted language scope. Do not partially modernize — either the entire component is ABAP Cloud or it is not ([SAP-samples/abap-cheat-sheets: 19_ABAP_for_Cloud_Development.md](https://github.com/SAP-samples/abap-cheat-sheets/blob/a79310222d643d9a053a76bae3712e726fb6a880/19_ABAP_for_Cloud_Development.md)).
 
 4. **Over-using REDUCE until the code becomes unreadable.** `REDUCE` is powerful but can produce deeply nested, hard-to-debug expressions. If a `REDUCE` expression exceeds ~5 lines or nests another `FOR`/`REDUCE` inside it, extract it into a named helper method. Clarity beats cleverness ("ABAP to the Future", Chapter 5: Constructor Expressions).
 
@@ -558,11 +558,11 @@ ENDCLASS.
 ## References
 
 - [SAP-samples/abap-cheat-sheets](https://github.com/SAP-samples/abap-cheat-sheets) — Apache-2.0. Primary reference for modern ABAP syntax examples. Key cheat sheets: 01 (Internal Tables), 05 (Constructor Expressions), 07 (String Processing), 14 (ABAP Unit Tests), 16 (Data Types), 19 (ABAP for Cloud Development), 27 (Exceptions).
-- [SAP/abap-cleaner](https://github.com/SAP/abap-cleaner) — Apache-2.0. Automated cleanup tool with 100+ rules. See [docs/rules.md](https://github.com/SAP/abap-cleaner/blob/main/docs/rules.md) for the full rule catalog.
+- [SAP/abap-cleaner](https://github.com/SAP/abap-cleaner) — Apache-2.0. Automated cleanup tool with 100+ rules. See [docs/rules.md](https://github.com/SAP/abap-cleaner/blob/952c68076fb0c5a258d947ca269e876d12603190/docs/rules.md) for the full rule catalog.
 - [SAP/abap-atc-cr-cv-s4hc-tools](https://github.com/SAP/abap-atc-cr-cv-s4hc-tools) — Apache-2.0. Exemption Migration Tool for Clean Core ATC checks.
 - [SAP Note 2436688](https://me.sap.com/notes/2436688) — Custom Code Checks for SAP S/4HANA: defines the ATC check variant that enforces ABAP Cloud restrictions on custom code.
 - [SAP Help: ABAP Keyword Documentation](https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/index.htm) — Canonical reference for all ABAP statements and additions.
 - [SAP Help: ABAP for Cloud Development](https://help.sap.com/doc/abapdocu_cp_index_htm/CLOUD/en-US/index.htm) — Restricted language scope documentation for ABAP Cloud.
-- [Clean ABAP Styleguide](https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md) — SAP's official style guide for modern ABAP code.
+- [Clean ABAP Styleguide](https://github.com/SAP/styleguides/blob/6279311f42bf1f91896935c071bec8dbca97cf59/clean-abap/CleanABAP.md) — SAP's official style guide for modern ABAP code.
 - "ABAP to the Future" (SAP Press, 3rd edition) — Chapters 2–5 cover inline declarations, constructor expressions, and modern iteration patterns.
 - [SAP Note 1912445](https://me.sap.com/notes/1912445) — Recommended ABAP Test Cockpit check variants.
