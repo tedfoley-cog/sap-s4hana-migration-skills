@@ -1,6 +1,6 @@
 ## Shared preamble for all child sessions
 
-You are authoring a single skill in the new repository **`tedfoley-cog/sap-s4hana-migration-skills`**. The repo's purpose is to provide Devin-native (and Claude-Code-compatible) skills for SAP ECC → S/4HANA migration projects.
+You are authoring a single skill in the new repository **`tedfoley-cog/sap-s4hana-migration-skills`**. The repo's purpose is to provide Devin-native skills for SAP ECC → S/4HANA migration projects.
 
 ### What you must do
 
@@ -15,7 +15,7 @@ You are authoring a single skill in the new repository **`tedfoley-cog/sap-s4han
    - `docs/sources.md` — master source list.
 3. **Create exactly one skill** at `.agents/skills/<skill-name>/SKILL.md` (see your task brief below for the exact name and scope).
    - Add reference files under `.agents/skills/<skill-name>/references/` if you need to push depth out of the main SKILL.md.
-   - Do NOT edit any other skill, the scripts, the design docs, or anything under `plugins/`.
+   - Do NOT edit any other skill, the scripts, or the design docs.
 4. **Frontmatter rules** (must follow `AUTHORING.md` §2 exactly):
    - `name` must equal the directory name (kebab-case, prefixed `sap-`).
    - `description` MUST start with "Use when ..." and list at least 3 concrete trigger phrases (transaction codes, error symptoms, simplification names).
@@ -44,9 +44,8 @@ You are authoring a single skill in the new repository **`tedfoley-cog/sap-s4han
 9. **Validation**:
    ```bash
    ./scripts/validate-skills.sh
-   ./scripts/sync-to-plugins.sh
    ```
-   Commit both `.agents/skills/<your-skill>/` and the regenerated `plugins/` and `.claude-plugin/marketplace.json`.
+   Commit `.agents/skills/<your-skill>/`.
 10. **PR**:
     - Branch: `add-skill-<skill-name>`
     - Title: `Add skill: <skill-name>`
@@ -75,14 +74,13 @@ When filling in `related_skills` in your frontmatter, pick from this list. Other
 ### Hard rules
 
 - ❌ Do NOT edit sibling skills. If you spot a needed change, mention it in your PR description.
-- ❌ Do NOT add Claude-Code-only fields (`commands`, `agents`, `hooks`, `mcp`) to your frontmatter — they'll be stripped.
 - ❌ Do NOT invent SAP behavior. If you can't cite it, don't write it.
 - ❌ Do NOT embed images as base64. Put diagrams in `references/` and link to them.
 - ❌ Do NOT use `gh` CLI to create the PR — use the standard PR creation flow.
 - ❌ Do NOT push directly to `main`. Always go through a PR.
 - ✅ DO include realistic ABAP / transaction-code / table-name examples.
 - ✅ DO cite authoritative sources for every factual claim.
-- ✅ DO run the validate and sync scripts before committing.
+- ✅ DO run the validate script before committing.
 
 ### Definition of done
 

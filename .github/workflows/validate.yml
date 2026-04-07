@@ -18,11 +18,3 @@ jobs:
         run: pip install pyyaml
       - name: Validate skills
         run: ./scripts/validate-skills.sh
-      - name: Verify plugins/ mirror is up to date
-        run: |
-          ./scripts/sync-to-plugins.sh
-          if ! git diff --quiet plugins .claude-plugin; then
-            echo "::error::plugins/ mirror is out of sync. Run ./scripts/sync-to-plugins.sh and commit the result."
-            git diff plugins .claude-plugin | head -100
-            exit 1
-          fi

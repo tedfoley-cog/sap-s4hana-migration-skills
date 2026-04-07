@@ -1,6 +1,6 @@
 # sap-s4hana-migration-skills
 
-Devin-native skills (and Claude Code plugins) for **SAP ECC → S/4HANA migration** projects.
+Devin-native skills for **SAP ECC → S/4HANA migration** projects.
 
 This repository is the canonical source of agent-readable runbooks for the major activities in a brownfield SAP system conversion: custom code scoping, ATC readiness, simplification database lookup, SPDD/SPAU adjustments, SUM/DMO cutover, functional simplifications (Business Partner, MATNR length, MATDOC, Universal Journal), HANA performance remediation, modern ABAP rewriting, clean-core extensibility, data migration cockpit, Fiori activation, and migration testing.
 
@@ -14,10 +14,7 @@ These skills are intentionally narrow, runbook-style, and citation-heavy. Each s
 
 | Harness | Path scanned | Notes |
 |---|---|---|
-| **Devin** | `.agents/skills/<name>/SKILL.md` (canonical) | Single source of truth. Devin's skill scanner is non-recursive at this path. |
-| **Claude Code / Factory Droid** | `plugins/<name>/skills/<name>/SKILL.md` (generated) | Auto-mirrored from `.agents/skills/` via `scripts/sync-to-plugins.sh`. Do not edit by hand. |
-
-The two layouts share the same SKILL.md content. Claude Code-only features (slash commands, sub-agents, hooks) are intentionally **not** included so the same skills work identically across harnesses.
+| **Devin** | `.agents/skills/<name>/SKILL.md` | Single source of truth. Devin's skill scanner is non-recursive at this path. |
 
 ## Skill catalog
 
@@ -49,16 +46,6 @@ cp -r sap-s4hana-migration-skills/.agents/skills/* /path/to/your/project/.agents
 
 Or add a small symlink-style sync command to your project's environment config so the skills are kept in sync automatically. See [`docs/installation-devin.md`](docs/installation-devin.md).
 
-### For Claude Code / Factory Droid
-
-Add this repo as a marketplace:
-
-```bash
-/plugin marketplace add tedfoley-cog/sap-s4hana-migration-skills
-```
-
-Then install individual plugins by name. See [`docs/installation-claude-code.md`](docs/installation-claude-code.md).
-
 ## Authoring
 
 If you're adding or improving a skill, read [`AUTHORING.md`](AUTHORING.md) first. It is normative.
@@ -69,8 +56,7 @@ Workflow:
 ./scripts/new-skill.sh sap-my-new-skill   # scaffolds the directory + SKILL.md template
 # ... edit .agents/skills/sap-my-new-skill/SKILL.md ...
 ./scripts/validate-skills.sh              # frontmatter + link checks
-./scripts/sync-to-plugins.sh              # regenerate plugins/ mirror
-git add .agents/skills plugins .claude-plugin
+git add .agents/skills
 git commit -m "Add skill: sap-my-new-skill"
 ```
 

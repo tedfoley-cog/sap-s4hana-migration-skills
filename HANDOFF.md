@@ -19,17 +19,13 @@ sap-skills-project/
         ├── LICENSE (Apache-2.0)
         ├── AUTHORING.md
         ├── .agents/skills/   # ⭐ canonical Devin-native location (empty, ready to fill)
-        ├── plugins/          # 🤖 auto-generated mirror — DO NOT edit by hand
-        ├── .claude-plugin/   # auto-generated marketplace.json
         ├── scripts/
         │   ├── validate-skills.sh    # frontmatter + section validation
-        │   ├── sync-to-plugins.sh    # idempotent .agents/skills → plugins/ mirror
         │   └── new-skill.sh          # scaffold a new SKILL.md
         ├── docs/
         │   ├── installation-devin.md
-        │   ├── installation-claude-code.md
         │   └── sources.md
-        └── .github/workflows/validate.yml  # CI: validate + enforce mirror in sync
+        └── .github/workflows/validate.yml  # CI: validate skills
 ```
 
 The scaffold has one commit on its local `main` branch. `.git` is included so the next session can push it.
@@ -71,14 +67,13 @@ The scaffold has one commit on its local `main` branch. `.git` is included so th
 
    All 12 are independent and can run in parallel. Each child opens its own PR against `main`.
 
-3. **Monitor and merge.** Each PR must pass `.github/workflows/validate.yml` (frontmatter validation + plugins/ mirror sync check). Merge PRs in any order — there are no dependencies between skills.
+3. **Monitor and merge.** Each PR must pass `.github/workflows/validate.yml` (frontmatter validation). Merge PRs in any order — there are no dependencies between skills.
 
-4. **Final pass.** After all 12 are merged, run `./scripts/validate-skills.sh && ./scripts/sync-to-plugins.sh` once more to confirm nothing drifted, and update `README.md` with the final skill catalog table if needed.
+4. **Final pass.** After all 12 are merged, run `./scripts/validate-skills.sh` once more to confirm nothing drifted, and update `README.md` with the final skill catalog table if needed.
 
 ## Key design decisions (already locked in)
 
-- **Devin-native is canonical**: `.agents/skills/<name>/SKILL.md`, single-level. The Claude Code `plugins/` layout is auto-generated.
-- **No Claude-Code-only features**: no `commands/`, `agents/`, `hooks/`, `mcp/`. Strict subset that works identically on Devin and Claude Code.
+- **Devin-native layout**: `.agents/skills/<name>/SKILL.md`, single-level.
 - **Apache-2.0 license** (not GPL like secondsky/sap-skills) for downstream reuse.
 - **Strict frontmatter contract**: `name`, `description` (must start with "Use when"), `license`, `metadata.version`, `metadata.last_verified`, `metadata.s4hana_release`, `metadata.sources`, `related_skills`. Validated in CI.
 - **7-section body structure** (in order): When to use → Prerequisites → Quick decision tree → Procedure → Worked example → Anti-patterns → References.
@@ -92,10 +87,7 @@ The scaffold has one commit on its local `main` branch. `.git` is included so th
 cd scaffold/sap-s4hana-migration-skills
 ./scripts/new-skill.sh sap-test-placeholder      # scaffold a dummy skill
 ./scripts/validate-skills.sh                      # should pass
-./scripts/sync-to-plugins.sh                      # generates plugins/ mirror
-git status                                        # confirm plugins/ + .claude-plugin/ updated
-rm -rf .agents/skills/sap-test-placeholder plugins/sap-test-placeholder
-./scripts/sync-to-plugins.sh                      # marketplace.json should be empty again
+rm -rf .agents/skills/sap-test-placeholder
 ```
 
 All scripts have been tested in this exact way and work cleanly.

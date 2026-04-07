@@ -83,4 +83,3 @@ EOF
 echo "Created $target/SKILL.md"
 echo "Edit it, then run:"
 echo "  ./scripts/validate-skills.sh"
-echo "  ./scripts/sync-to-plugins.sh"

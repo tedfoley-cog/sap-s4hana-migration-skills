@@ -1,9 +1,8 @@
 # sap-s4hana-migration-skills — Design
 
-A multi-harness skills repository for SAP ECC → S/4HANA migration projects.
+A Devin-native skills repository for SAP ECC → S/4HANA migration projects.
 
-**Primary target**: Devin (`.agents/skills/<name>/SKILL.md`, flat, single-level).
-**Secondary target**: Claude Code / Factory Droid (`plugins/<name>/skills/<name>/SKILL.md` + `.claude-plugin/marketplace.json`), generated automatically from the Devin layout via a sync script.
+**Target**: Devin (`.agents/skills/<name>/SKILL.md`, flat, single-level).
 
 This document is the contract every contributor (human or child Devin session) must follow.
 
@@ -14,15 +13,13 @@ This document is the contract every contributor (human or child Devin session) m
 ### Goals
 1. Provide context-aware, runbook-style skills covering the full custom-code & functional path of an ECC → S/4HANA system conversion.
 2. Be **drop-in usable by Devin** with no shim: the agent can `skill list` at the repo root and immediately discover all skills.
-3. Be **drop-in usable by Claude Code / Factory Droid** via a generated `plugins/` mirror, so a single source of truth feeds both ecosystems.
 4. Source content from authoritative material: SAP's Custom Code Migration Guide, official SAP-samples repos, SAP/abap-cleaner, the Simplification Item Catalog, and reputable SAP Community blogs. Cite everything.
 5. Each skill is independently invocable. Skills cross-reference each other but never depend on shared mutable state.
 
 ### Non-goals
-- We do **not** ship Claude Code slash commands, sub-agents, or hooks. Devin has no equivalent and we want zero divergence between targets. If Claude-Code-only consumers want commands, they can layer them on downstream.
 - We do **not** ship code that connects to a live SAP system. These are reference / runbook skills, not tooling.
 - We do **not** redistribute SAP proprietary documentation verbatim. Quote sparingly with attribution under fair use; link out for the rest.
-- We do **not** try to replace SAP Joule for Developers. We complement it for users on Devin / Claude Code / other harnesses.
+- We do **not** try to replace SAP Joule for Developers. We complement it for users on Devin and other harnesses.
 
 ---
 
@@ -30,7 +27,7 @@ This document is the contract every contributor (human or child Devin session) m
 
 ```
 sap-s4hana-migration-skills/
-├── README.md                          # Top-level pitch + install instructions for both harnesses
+├── README.md                          # Top-level pitch + install instructions
 ├── LICENSE                            # Apache-2.0 (skill content) - see §6
 ├── CONTRIBUTING.md                    # How to author a new skill (links to AUTHORING.md)
 ├── AUTHORING.md                       # Strict rules for SKILL.md format and content
@@ -76,34 +73,19 @@ sap-s4hana-migration-skills/
 │       └── sap-migration-testing/
 │           └── SKILL.md
 │
-├── plugins/                            # 🤖 Generated mirror for Claude Code / Factory Droid
-│   └── ... (do NOT edit by hand; produced by scripts/sync-to-plugins.sh)
-│
-├── .claude-plugin/                     # Generated marketplace manifest
-│   └── marketplace.json
-│
 ├── scripts/
-│   ├── sync-to-plugins.sh              # .agents/skills → plugins/ + marketplace.json
 │   ├── validate-skills.sh              # Lint SKILL.md frontmatter, link checks
 │   └── new-skill.sh                    # Scaffold a new skill from template
 │
 ├── docs/
 │   ├── installation-devin.md
-│   ├── installation-claude-code.md
 │   ├── skill-catalog.md                # Auto-generated index of all skills
 │   └── sources.md                      # Master attribution list
 │
 └── .github/
     └── workflows/
-        ├── validate.yml                # Run validate-skills.sh on PRs
-        └── sync-plugins.yml            # Auto-regenerate plugins/ on push to main
+        └── validate.yml                # Run validate-skills.sh on PRs
 ```
-
-### Why Devin-native is canonical (not Claude Code)
-
-- Devin's skill scanner is **non-recursive** at `.agents/skills/`. The Claude Code layout is two levels deeper (`plugins/<x>/skills/<y>/`). Going Devin → plugins is a flatten-then-wrap operation; the reverse would require collision resolution.
-- Devin format is the strict subset (no commands, agents, hooks). Generating the strict subset from a richer source is lossy in the wrong direction.
-- One canonical source = one authoring workflow = no drift.
 
 ---
 
@@ -136,7 +118,7 @@ related_skills:
 ---
 ```
 
-**Why "Use when ..." matters**: Devin's skill discovery uses the description field to decide whether to surface a skill for the current task. A description that starts with "Use when ..." and lists concrete trigger phrases (transaction codes, simplification names, error symptoms) dramatically improves recall. This convention is also what Anthropic recommends in the official Skill spec, so it works equally well in Claude Code.
+**Why "Use when ..." matters**: Devin's skill discovery uses the description field to decide whether to surface a skill for the current task. A description that starts with "Use when ..." and lists concrete trigger phrases (transaction codes, simplification names, error symptoms) dramatically improves recall.
 
 ### Body structure (recommended template)
 
@@ -207,23 +189,7 @@ Each skill is owned by exactly one child session in the initial build. After v0.
 
 ---
 
-## 5. Sync script (`scripts/sync-to-plugins.sh`)
-
-The sync script reads `.agents/skills/*/SKILL.md`, parses the YAML frontmatter, and emits:
-
-1. `plugins/<skill>/skills/<skill>/SKILL.md` — copy of the source.
-2. `plugins/<skill>/skills/<skill>/README.md` — auto-generated keyword index from frontmatter.
-3. `plugins/<skill>/.claude-plugin/plugin.json` — Claude Code plugin manifest derived from frontmatter (name, description, version, license, keywords, category=`sap-migration`).
-4. `plugins/<skill>/skills/<skill>/references/*` — copy of references dir if present.
-5. `.claude-plugin/marketplace.json` — top-level marketplace catalog listing all plugins.
-
-The script is idempotent. CI runs it on every push to `main` and fails if `plugins/` is out of sync, forcing contributors to commit the regenerated mirror.
-
-We will **not** publish a separate sync from `plugins/` back to `.agents/skills/`. The Devin layout is the only writable layout.
-
----
-
-## 6. License
+## 5. License
 
 - **Repo content (SKILL.md, references, docs)**: Apache-2.0. Permissive, attribution-required, compatible with both commercial and open-source consumers, more practical than GPL-3.0 for downstream skill marketplaces. Differs deliberately from secondsky/sap-skills (GPL-3.0) — we want maximum reuse.
 - **Sourced material**: Each reference file declares its upstream license at the top. Where SAP material is used, we paraphrase under fair use and link out; we never bundle the SAP guide PDF.
@@ -231,7 +197,7 @@ We will **not** publish a separate sync from `plugins/` back to `.agents/skills/
 
 ---
 
-## 7. Authoring workflow for child sessions
+## 6. Authoring workflow for child sessions
 
 Each child session that owns a skill MUST:
 
@@ -239,13 +205,13 @@ Each child session that owns a skill MUST:
 2. Create the directory `.agents/skills/<skill-name>/` and write `SKILL.md` following the frontmatter schema in §3.
 3. Place supporting reference docs under `.agents/skills/<skill-name>/references/`.
 4. Cite all sources inline. Every factual claim about SAP behavior gets a citation (Note number, Help portal URL, or blog link).
-5. Run `scripts/validate-skills.sh` and `scripts/sync-to-plugins.sh` locally; commit both `.agents/skills/` and `plugins/` changes.
+5. Run `scripts/validate-skills.sh` locally; commit `.agents/skills/` changes.
 6. Open a PR to `main` titled `Add skill: <skill-name>`. Include in the PR body: source list, target SAP releases, and any `<!-- UNVERIFIED -->` flags that need human follow-up.
 7. Do **not** edit other skills. Cross-reference them by relative path; if you spot a needed change in a sibling skill, leave a comment in the PR.
 
 ---
 
-## 8. Quality bar (definition of done for v0.1)
+## 7. Quality bar (definition of done for v0.1)
 
 A skill is ready to merge when:
 
@@ -262,7 +228,7 @@ A skill is ready to merge when:
 
 ---
 
-## 9. Out of scope for v0.1
+## 8. Out of scope for v0.1
 
 - A live MCP server that queries the actual Simplification Item Catalog (could be a v0.2 add-on).
 - Automated PR generation that opens ATC findings as GitHub issues (also v0.2).
