@@ -1,0 +1,7 @@
+{
+  "name": "sap-s4hana-migration-skills",
+  "description": "Devin-native (and Claude Code compatible) skills for SAP ECC to S/4HANA migration projects.",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "plugins": []
+}
