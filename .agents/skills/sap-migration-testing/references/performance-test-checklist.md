@@ -61,7 +61,7 @@ For each of the top 10 batch jobs:
 
 | Category | Acceptable | Warning | Escalate |
 |---|---|---|---|
-| Online transaction response | ≤ ECC baseline | 1-2x ECC baseline | > 2x ECC baseline |
+| Online transaction response | ≤ ECC baseline | 1-1.2x ECC baseline | > 1.2x ECC baseline |
 | Batch job runtime | ≤ ECC baseline (most should improve) | 1-1.5x ECC baseline | > 1.5x ECC baseline |
 | ABAP dumps (ST22) | 0 per day | < 5 per day | ≥ 5 per day |
 | Database locks (SM12) | 0 persistent locks | Any persistent lock | Lock escalation affecting users |
