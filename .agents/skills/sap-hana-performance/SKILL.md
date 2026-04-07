@@ -298,7 +298,7 @@ SELECT SINGLE dmbtr FROM bseg
 " Returns unpredictable row
 
 " AFTER — fully qualified key or use UP TO 1 ROWS with ORDER BY
-SELECT dmbtr FROM acdoca
+SELECT hsl AS dmbtr FROM acdoca
   WHERE rbukrs = '1000'
     AND gjahr = '2024'
     AND rldnr = '0L'
