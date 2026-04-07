@@ -147,7 +147,7 @@ Additional task lists you may need:
 Each Fiori app consumes one or more OData services. These must be registered and active in the local SAP Gateway.
 
 1. Open transaction **`/IWFND/MAINT_SERVICE`** (Activate and Maintain Services).
-2. Search for the OData service name from the Fiori Apps Reference Library (e.g., `SD_F0095_SO_MANAGE_SRV`).
+2. Search for the OData service name from the Fiori Apps Reference Library (e.g., `API_SALES_ORDER_SRV`).
 3. If the service is listed and shows status **Active** (green), it is ready.
 4. If the service is missing, click **Add Service** → select the system alias (typically `LOCAL`) → find and register the service from the back-end catalog.
 5. After registration, test the service by clicking **Call Browser** or navigating to the service URL: `/sap/opu/odata/sap/<SERVICE_NAME>/$metadata`.

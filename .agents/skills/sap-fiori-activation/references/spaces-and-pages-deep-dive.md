@@ -1,6 +1,7 @@
 # Spaces and Pages in SAP Fiori Launchpad — Deep Dive
 
 > **Sources**: [SAP Note 2659151](https://me.sap.com/notes/2659151), [SAP Note 3023853](https://me.sap.com/notes/3023853), [SAP Help: SAP Fiori Overview](https://help.sap.com/docs/SAP_FIORI_OVERVIEW)
+> **License**: Content paraphrased from SAP documentation; original material © SAP SE, used under fair-use citation. This file is Apache-2.0.
 
 ## Background
 
