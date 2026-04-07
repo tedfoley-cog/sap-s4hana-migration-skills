@@ -12,7 +12,7 @@ metadata:
   last_verified: "2026-04-07"
   s4hana_release: "2023, 2024, 2025, 2025 FPS01"
   sources:
-    - "SAP Custom Code Migration Guide for SAP S/4HANA 2023 (help.sap.com PDF)"
+    - "SAP Custom Code Migration Guide for SAP S/4HANA 2025 FPS01 (help.sap.com PDF)"
     - "SAP Note 2185390 — Custom Code Migration Worklist"
     - "SAP Note 2436688 — Custom Code Check Variants for S/4HANA"
     - "SAP Help Portal — ABAP Call Monitor (SCMON) Usage Data Collection"
@@ -45,7 +45,7 @@ This skill does **not** cover ATC check execution (use `sap-atc-readiness`), sim
 
 1. **SAP Basis level**: The source ECC system must be on SAP NetWeaver 7.40 SP08 or higher to use SCMON. Earlier releases support only UPL (Usage and Procedure Logging) via transaction `SUSG` ([SAP Help: Usage Data Collection](https://help.sap.com/docs/ABAP_PLATFORM_NEW/ba8d2f117c1c41a6b1ff35e42a7d33ee/616e28917b3c4f18a14e6e5fa0f6b104.html)).
 2. **Authorization**: Users activating SCMON require authorization object `S_DEVELOP` with activity 02 (change) and the object type `PROG`. Aggregation via SUSG requires `S_SDF_CMON` ([SAP Help: Aggregating Usage Data](https://help.sap.com/docs/ABAP_PLATFORM_NEW/ba8d2f117c1c41a6b1ff35e42a7d33ee/e5d2b36e86561014b652e368a2828b24.html)).
-3. **Production system access**: SCMON must run in the production client where real business processes execute; sandbox or QA data is not representative ([SAP Custom Code Migration Guide, Section "Custom Code Scoping"](https://help.sap.com/doc/9dcbc5e47ba54a5cbb509a82e0319406/2023/en-US/CustomCodeMigration_Guide_2023.pdf)).
+3. **Production system access**: SCMON must run in the production client where real business processes execute; sandbox or QA data is not representative ([SAP Custom Code Migration Guide for S/4HANA 2025, Section "Custom Code Scoping"](https://help.sap.com/doc/9dcbc5e47ba54a5cbb509a82e0319406/2025.001/en-US/CustomCodeMigration_Guide_2025.pdf)).
 4. **Sufficient collection period**: SAP recommends collecting usage data for **at least 12 months** to capture all periodic programs including month-end, quarter-end, and year-end jobs ([SAP Note 2185390](https://me.sap.com/notes/2185390)).
 5. **BTP subaccount** (optional): If using the Custom Code Migration Fiori app, a BTP subaccount with the ABAP environment entitlement is needed. Alternatively, SAP Solution Manager 7.2 SP10+ with CCLM is supported for on-premise analysis.
 
@@ -152,7 +152,7 @@ Key checks before marking an object for deletion:
 
 1. In the development system, open transaction **`SE80`** or **`SE38`**.
 2. For each object confirmed for deletion, delete the object and assign it to a **dedicated transport request** (e.g., `<system-id>K9XXXXX`). Use a single transport or a small set grouped by package.
-3. **Important**: Do not release the transport yet. Park it so that SUM/DMO can pick it up during the conversion phase. The transport is imported into the target S/4HANA system as part of the SUM conversion process, ensuring deleted objects are never migrated ([SAP Custom Code Migration Guide, Section "Deletion Transports"](https://help.sap.com/doc/9dcbc5e47ba54a5cbb509a82e0319406/2023/en-US/CustomCodeMigration_Guide_2023.pdf)).
+3. **Important**: Do not release the transport yet. Park it so that SUM/DMO can pick it up during the conversion phase. The transport is imported into the target S/4HANA system as part of the SUM conversion process, ensuring deleted objects are never migrated ([SAP Custom Code Migration Guide for S/4HANA 2025, Section "Deletion Transports"](https://help.sap.com/doc/9dcbc5e47ba54a5cbb509a82e0319406/2025.001/en-US/CustomCodeMigration_Guide_2025.pdf)).
 4. Document the deletion transport numbers and include them in the SUM configuration stack XML.
 5. Review the transport contents with transaction `SE09`/`SE10` before handoff to the Basis team.
 
@@ -205,7 +205,7 @@ No batch jobs, dialog sessions, or RFC calls reference this report.
 - **SM37** (batch jobs): No active or released jobs reference `Z_OLD_SALES_RPT`.
 - **SE80** (where-used): No cross-references from other custom objects.
 - **RFCDES** (SM59): Not registered as an RFC-enabled function module (it is a report, not an FM).
-- **Dynamic call search**: `rg 'Z_OLD_SALES_RPT' /usr/sap/<SID>/...` across the code base — no dynamic `SUBMIT Z_OLD_SALES_RPT` or `CALL TRANSACTION` references found.
+- **Dynamic call search**: In `SE38` → *Find in Source Code*, search pattern `'Z_OLD_SALES_RPT'` across all Z/Y programs — no dynamic `SUBMIT Z_OLD_SALES_RPT` or `CALL TRANSACTION` references found.
 
 **Step 4 — CCLM / Custom Code Migration app**
 
@@ -255,13 +255,13 @@ Across all 4,200 objects, Meridian identifies 1,890 objects (45%) as unused. By 
 
 ### 4. Deleting objects referenced only via dynamic calls
 
-**Why it is wrong**: Standard `WHERE-USED` in SE80 does not find dynamic references like `CALL FUNCTION variable`. Before deleting any function module or report with zero SCMON calls, search the entire custom code base for string patterns that could dynamically reference the object. Use ABAP search tools or `SE38` → `Find in Source Code` with pattern `'Z_<object_name>'` across all Z/Y programs ([SAP Custom Code Migration Guide](https://help.sap.com/doc/9dcbc5e47ba54a5cbb509a82e0319406/2023/en-US/CustomCodeMigration_Guide_2023.pdf)).
+**Why it is wrong**: Standard `WHERE-USED` in SE80 does not find dynamic references like `CALL FUNCTION variable`. Before deleting any function module or report with zero SCMON calls, search the entire custom code base for string patterns that could dynamically reference the object. Use ABAP search tools or `SE38` → `Find in Source Code` with pattern `'Z_<object_name>'` across all Z/Y programs ([SAP Custom Code Migration Guide for S/4HANA 2025](https://help.sap.com/doc/9dcbc5e47ba54a5cbb509a82e0319406/2025.001/en-US/CustomCodeMigration_Guide_2025.pdf)).
 
 **Consequence**: Runtime short dumps (`CALL_FUNCTION_NOT_FOUND`, `PERFORM_NOT_FOUND`, `SUBMIT_REPORT_NOT_FOUND`) in production.
 
 ### 5. Scoping in a non-production system
 
-**Why it is wrong**: Usage data from QA, sandbox, or development systems does not reflect real business process execution patterns. Testers do not run year-end closes on the same schedule as production, and many custom programs are never executed in QA. Scoping decisions based on non-production data will identify actively-used programs as dead code ([SAP Custom Code Migration Guide, Section "Custom Code Scoping"](https://help.sap.com/doc/9dcbc5e47ba54a5cbb509a82e0319406/2023/en-US/CustomCodeMigration_Guide_2023.pdf)).
+**Why it is wrong**: Usage data from QA, sandbox, or development systems does not reflect real business process execution patterns. Testers do not run year-end closes on the same schedule as production, and many custom programs are never executed in QA. Scoping decisions based on non-production data will identify actively-used programs as dead code ([SAP Custom Code Migration Guide for S/4HANA 2025, Section "Custom Code Scoping"](https://help.sap.com/doc/9dcbc5e47ba54a5cbb509a82e0319406/2025.001/en-US/CustomCodeMigration_Guide_2025.pdf)).
 
 ### 6. Skipping the scoping step entirely
 
@@ -271,7 +271,7 @@ Across all 4,200 objects, Meridian identifies 1,890 objects (45%) as unused. By 
 
 ### SAP Official Documentation
 
-- [SAP Custom Code Migration Guide for SAP S/4HANA 2023](https://help.sap.com/doc/9dcbc5e47ba54a5cbb509a82e0319406/2023/en-US/CustomCodeMigration_Guide_2023.pdf) — Canonical runbook for custom code scoping and migration. Sections on SCMON activation, SUSG aggregation, scope decisions, and deletion transports.
+- [SAP Custom Code Migration Guide for SAP S/4HANA 2025 FPS01](https://help.sap.com/doc/9dcbc5e47ba54a5cbb509a82e0319406/2025.001/en-US/CustomCodeMigration_Guide_2025.pdf) — Canonical runbook for custom code scoping and migration. Sections on SCMON activation, SUSG aggregation, scope decisions, and deletion transports.
 - [SAP Help: Usage Data Collection (SCMON)](https://help.sap.com/docs/ABAP_PLATFORM_NEW/ba8d2f117c1c41a6b1ff35e42a7d33ee/616e28917b3c4f18a14e6e5fa0f6b104.html) — Official documentation for the ABAP Call Monitor transaction.
 - [SAP Help: Aggregating Usage Data (SUSG)](https://help.sap.com/docs/ABAP_PLATFORM_NEW/ba8d2f117c1c41a6b1ff35e42a7d33ee/e5d2b36e86561014b652e368a2828b24.html) — Official documentation for the Usage and Procedure Logging aggregator.
 - [SAP Help: SAP Solution Manager — Custom Code Management](https://help.sap.com/docs/SAP_Solution_Manager/4fc8d03390c342da8a60f8ee387bca1a/1f97b4d3ecbe4a94b60b3e5f738e4a77.html) — CCLM documentation for on-premise analysis.
