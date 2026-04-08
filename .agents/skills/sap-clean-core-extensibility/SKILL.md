@@ -211,7 +211,7 @@ cds init my-s4-extension --add hana,approuter
 cds import ./API_BUSINESS_PARTNER.edmx --as external-service
 
 # Generate a typed OData client from EDMX metadata
-generate-odata-client --inputDir ./edmx --outputDir ./generated --useSwagger
+generate-odata-client --inputDir ./edmx --outputDir ./generated
 
 # Build an MTA archive for deployment
 mbt build -t ./dist
