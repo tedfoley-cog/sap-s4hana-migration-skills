@@ -235,20 +235,24 @@ Delta worklists compare two successive ATC runs to show remediation progress ([S
 
 ```bash
 # Run the S/4HANA readiness check variant against a package
-sapcli atc run --variant S4HANA_READINESS_2025 '$Z_CUSTOM_PKG' --output json > atc_results.json
+# Syntax: sapcli atc run {package,class,program} OBJECT_NAME [-r VARIANT] [-o {human,html,checkstyle}]
+sapcli atc run package '$Z_CUSTOM_PKG' -r S4HANA_READINESS_2025 -o checkstyle > atc_results.xml
 
-# Parse the JSON results — count findings by priority
+# Parse the checkstyle XML results — count findings by severity
 python3 -c "
-import json, collections
-data = json.load(open('atc_results.json'))
-findings = data.get('findings', [])
-counts = collections.Counter(f.get('priority', 'unknown') for f in findings)
-for prio, count in sorted(counts.items()):
-    print(f'Priority {prio}: {count} findings')
+import xml.etree.ElementTree as ET
+tree = ET.parse('atc_results.xml')
+root = tree.getroot()
+for f in root.findall('.//file'):
+    name = f.get('name', '')
+    errors = f.findall('error')
+    print(f'{name}: {len(errors)} findings')
+    for e in errors:
+        print(f'  [{e.get(\"severity\")}] line {e.get(\"line\")}: {e.get(\"message\")}')
 "
 
-# Run against a specific object list (transport-based scope)
-sapcli atc run --variant S4HANA_READINESS_2025 --objects zcl_customer_helper zcl_vendor_api --output json
+# Run against a specific class
+sapcli atc run class zcl_customer_helper -r S4HANA_READINESS_2025 -o checkstyle
 ```
 
 This integrates directly with the delta worklist workflow (Step 8) — re-run after remediation to produce a diff of cleared vs. remaining findings ([sapcli README](https://github.com/jfilak/sapcli)).

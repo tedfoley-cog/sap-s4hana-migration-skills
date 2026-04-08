@@ -409,7 +409,7 @@ The full `sapcli → abap-cleaner → sapcli → aunit` pipeline automates the m
 
 ```bash
 # Step 1: Download the source of the class to modernize
-sapcli checkout class zcl_invoice_builder --output-dir ./rewrite
+sapcli checkout class zcl_invoice_builder ./rewrite
 
 # Step 2: Run abap-cleaner in headless mode to apply modernization rules
 java -jar abap-cleaner.jar \
@@ -421,9 +421,9 @@ java -jar abap-cleaner.jar \
 diff -u ./rewrite/zcl_invoice_builder.clas.abap \
         ./rewrite/zcl_invoice_builder_cleaned.clas.abap
 
-# Step 4: Push the cleaned source back to the SAP system
-sapcli push class zcl_invoice_builder \
-  --source ./rewrite/zcl_invoice_builder_cleaned.clas.abap
+# Step 4: Write the cleaned source back to the SAP system and activate
+sapcli class write zcl_invoice_builder \
+  ./rewrite/zcl_invoice_builder_cleaned.clas.abap --activate
 
 # Step 5: Run ABAP Unit tests to verify nothing broke
 sapcli aunit run class zcl_invoice_builder --output junit4 > aunit_results.xml

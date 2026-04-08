@@ -68,7 +68,7 @@ This skill is a **cross-cutting reference**. Each migration-specific skill (e.g.
 What do you need to do?
 │
 ├── Work with ABAP source code on an on-prem SAP system?
-│   └── sapcli  (download, push, ATC, aunit, transports)
+│   └── sapcli  (download, write, ATC, aunit, transports)
 │
 ├── Run SQL against SAP HANA?
 │   └── hdbsql  (performance queries, data validation, DDL)
@@ -106,7 +106,7 @@ The following 9 CLIs install and run cleanly in the Devin Linux sandbox. They ar
 
 | CLI | Install | Primary use in migration |
 |---|---|---|
-| **sapcli** | `pip install sapcli` | ABAP source download/push, ATC checks, aunit, transports ([GitHub](https://github.com/jfilak/sapcli)) |
+| **sapcli** | `pipx install git+https://github.com/jfilak/sapcli.git` | ABAP source download/write, ATC checks, aunit, transports ([GitHub](https://github.com/jfilak/sapcli)) |
 | **hdbsql** | HANA Client tarball → `hdbinst --batch` | SQL queries against HANA (performance, validation) ([SAP Help](https://help.sap.com/docs/hana/sap-hana-client-interface-programming-reference)) |
 | **btp** | Binary from `tools.hana.ondemand.com` | BTP account/subaccount/entitlement management ([SAP Help](https://help.sap.com/docs/btp/sap-business-technology-platform/account-administration-using-sap-btp-command-line-interface-btp-cli)) |
 | **cf** | `sudo apt install cf8-cli` | Cloud Foundry app deployment, service binding ([CF docs](https://docs.cloudfoundry.org/cf-cli/)) |
@@ -128,7 +128,7 @@ The following 9 CLIs install and run cleanly in the Devin Linux sandbox. They ar
 
 ```bash
 # ── On-prem ABAP tools ───────────────────────────────────────────────────
-pip install sapcli
+pipx install git+https://github.com/jfilak/sapcli.git
 
 # abap-cleaner (headless mode)
 curl -L "https://github.com/SAP/abap-cleaner/releases/download/v1.20.0/abap-cleaner-headless.jar" \
@@ -256,7 +256,7 @@ If the Devin sandbox cannot reach the SAP system, request VPN configuration from
 | Phase | Skill | Primary CLIs |
 |---|---|---|
 | Pre-conversion scoping | `sap-scoping` | `sapcli` (package export for analysis) |
-| Pre-conversion ATC | `sap-atc-readiness` | `sapcli atc run` (JSON output for automated triage) |
+| Pre-conversion ATC | `sap-atc-readiness` | `sapcli atc run` (checkstyle XML output for automated triage) |
 | Pre-conversion simplifications | `sap-simplification-database` | `sapcli` (source diff), `hdbsql` (table checks) |
 | Conversion adjustments | `sap-spdd-spau` | `sapcli` (object download), `abap-cleaner` (cleanup) |
 | Cutover | `sap-sum-dmo` | None — SUM is advisory only |
@@ -276,7 +276,7 @@ If the Devin sandbox cannot reach the SAP system, request VPN configuration from
 
 ```bash
 # Install sapcli and abap-cleaner
-pip install sapcli
+pipx install git+https://github.com/jfilak/sapcli.git
 curl -L "https://github.com/SAP/abap-cleaner/releases/download/v1.20.0/abap-cleaner-headless.jar" \
   -o /usr/local/lib/abap-cleaner.jar
 
@@ -288,12 +288,14 @@ export SAP_USER="${SAP_USER}" SAP_PASSWORD="${SAP_PASSWORD}"
 **Step 2 — Run ATC readiness check:**
 
 ```bash
-sapcli atc run --variant S4HANA_READINESS_2025 '$Z_SALES' --output json > findings.json
+# Syntax: sapcli atc run {package,class,program} OBJECT_NAME [-r VARIANT] [-o {human,html,checkstyle}]
+sapcli atc run package '$Z_SALES' -r S4HANA_READINESS_2025 -o checkstyle > findings.xml
 python3 -c "
-import json
-data = json.load(open('findings.json'))
-for f in data.get('findings', []):
-    print(f\"{f['priority']} | {f['object']} | {f['message']}\")
+import xml.etree.ElementTree as ET
+root = ET.parse('findings.xml').getroot()
+for f in root.findall('.//file'):
+    for e in f.findall('error'):
+        print(f\"{e.get('severity')} | {f.get('name')} | {e.get('message')}\")
 "
 ```
 
@@ -303,7 +305,7 @@ Output shows 3 findings in `ZCL_ORDER_HELPER` — deprecated BAPI calls.
 
 ```bash
 # Download the source
-sapcli checkout class zcl_order_helper --output-dir ./fix
+sapcli checkout class zcl_order_helper ./fix
 
 # Apply abap-cleaner modernization rules
 java -jar /usr/local/lib/abap-cleaner.jar \
@@ -314,8 +316,8 @@ java -jar /usr/local/lib/abap-cleaner.jar \
 # Review the diff
 diff -u ./fix/zcl_order_helper.clas.abap ./fix/zcl_order_helper_cleaned.clas.abap
 
-# Push the cleaned source back
-sapcli push class zcl_order_helper --source ./fix/zcl_order_helper_cleaned.clas.abap
+# Write the cleaned source back and activate
+sapcli class write zcl_order_helper ./fix/zcl_order_helper_cleaned.clas.abap --activate
 ```
 
 **Step 4 — Verify with ABAP Unit tests:**
@@ -330,7 +332,7 @@ for s in root.findall('.//testsuite'):
 "
 ```
 
-All tests pass. The full pipeline — `sapcli atc` → download → `abap-cleaner` → push → `sapcli aunit` — completed without SAP GUI or Eclipse.
+All tests pass. The full pipeline — `sapcli atc` → download → `abap-cleaner` → write → `sapcli aunit` — completed without SAP GUI or Eclipse.
 
 ## Anti-patterns
 

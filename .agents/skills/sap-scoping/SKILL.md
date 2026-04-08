@@ -184,7 +184,7 @@ sapcli package list '$Z_CUSTOM_PKG' --recursive
 sapcli checkout class zcl_customer_helper
 
 # Download an entire package tree for grep / static analysis
-sapcli checkout package '$Z_CUSTOM_PKG' --recursive --output-dir ./scoping-export
+sapcli checkout package '$Z_CUSTOM_PKG' ./scoping-export --recursive
 ```
 
 Use the exported source to build the scoped worklist before feeding it to ATC (see `sap-atc-readiness`). This avoids manual SE80 navigation and scales to thousands of objects ([sapcli README](https://github.com/jfilak/sapcli)).

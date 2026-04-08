@@ -208,7 +208,7 @@ Use `sapcli` to download modified objects for offline review and `abap-cleaner` 
 
 ```bash
 # Download a modified program for offline diff / review
-sapcli checkout program sapmm06e --output-dir ./spau-review
+sapcli checkout program sapmm06e ./spau-review
 
 # After SPAU adjustment, clean up the adjusted source with abap-cleaner
 java -jar abap-cleaner.jar \
