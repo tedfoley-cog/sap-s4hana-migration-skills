@@ -92,12 +92,12 @@ if command -v hdbsql >/dev/null 2>&1; then
     yellow "  hdbsql already installed, skipping"
 else
     echo "  Downloading SAP HANA Client..."
-    TMPDIR=$(mktemp -d)
+    tmpdir=$(mktemp -d)
     curl -fsSL "https://tools.hana.ondemand.com/additional/hanaclient-latest-linux-x64.tar.gz" \
-      -o "$TMPDIR/hanaclient.tgz"
-    tar -xzf "$TMPDIR/hanaclient.tgz" -C "$TMPDIR"
-    (cd "$TMPDIR"/client && ./hdbinst --batch --path=/opt/sap/hdbclient)
-    rm -rf "$TMPDIR"
+      -o "$tmpdir/hanaclient.tgz"
+    tar -xzf "$tmpdir/hanaclient.tgz" -C "$tmpdir"
+    (cd "$tmpdir"/client && ./hdbinst --batch --path=/opt/sap/hdbclient)
+    rm -rf "$tmpdir"
     echo 'export PATH="/opt/sap/hdbclient:$PATH"' >> "$HOME/.bashrc"
     export PATH="/opt/sap/hdbclient:$PATH"
     green "  hdbsql installed to /opt/sap/hdbclient"
@@ -111,12 +111,12 @@ if command -v btp >/dev/null 2>&1; then
     yellow "  btp CLI already installed, skipping"
 else
     echo "  Downloading btp CLI..."
-    TMPDIR=$(mktemp -d)
+    tmpdir=$(mktemp -d)
     curl -fsSL "https://tools.hana.ondemand.com/additional/btp-cli-linux-amd64-LATEST.tar.gz" \
-      -o "$TMPDIR/btp.tgz"
-    tar -xzf "$TMPDIR/btp.tgz" -C "$TMPDIR"
-    sudo mv "$TMPDIR"/linux-amd64/btp /usr/local/bin/
-    rm -rf "$TMPDIR"
+      -o "$tmpdir/btp.tgz"
+    tar -xzf "$tmpdir/btp.tgz" -C "$tmpdir"
+    sudo mv "$tmpdir"/linux-amd64/btp /usr/local/bin/
+    rm -rf "$tmpdir"
     green "  btp CLI installed"
 fi
 
