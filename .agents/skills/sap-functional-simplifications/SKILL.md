@@ -12,7 +12,7 @@ description: |
   Management), and other notable simplifications.
 license: Apache-2.0
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
   last_verified: "2026-04-07"
   s4hana_release: "2023, 2025"
   sources:
@@ -27,11 +27,19 @@ metadata:
     - "SAP Community — SAP S/4HANA Inventory Management Tables (Sreekanth Surampally, 2021)"
     - "SAP Community — All you need to know about Universal Journal (2022)"
     - "SAP Community — Business Partner Concept in SAP S/4HANA (2023)"
+    - "SAP HANA Client hdbsql (https://help.sap.com/docs/hana/sap-hana-client-interface-programming-reference)"
+    - "sapcli — ADT command-line client (https://github.com/jfilak/sapcli)"
 related_skills:
-  - sap-simplification-database
   - sap-atc-readiness
-  - sap-modern-abap-rewrite
   - sap-clean-core-extensibility
+  - sap-cli-toolbelt
+  - sap-data-migration-cockpit
+  - sap-hana-performance
+  - sap-migration-testing
+  - sap-modern-abap-rewrite
+  - sap-simplification-database
+  - sap-spdd-spau
+  - sap-sum-dmo
 ---
 
 ## When to use this skill
@@ -294,6 +302,38 @@ These simplifications do not require full sections but must be on the migration 
 **APO → IBP** — SAP Advanced Planning and Optimization (APO) is not part of S/4HANA. Demand planning and supply network planning move to SAP Integrated Business Planning (IBP), which is a cloud solution. Custom APO interfaces (CIF, `/SAPAPO/` function modules) must be replaced. This is a separate project workstream, not an in-place code remediation ([SAP Note 1976487](https://me.sap.com/notes/1976487)).
 
 **CRM → S/4HANA or C/4HANA** — SAP CRM is not part of S/4HANA. CRM functionality is either embedded in S/4HANA (basic sales/service) or provided by SAP CX (C/4HANA, now SAP Customer Experience). Custom CRM middleware interfaces need reassessment. Again, this is a separate migration workstream ([SAP Note 1976487](https://me.sap.com/notes/1976487)).
+
+
+### CLI usage
+
+Use `hdbsql` to validate table existence and data integrity after simplification, and `sapcli` for ABAP-level checks.
+
+**Environment variables**:
+- `HANA_HOST`, `HANA_USER`, `HANA_PASSWORD` (for hdbsql)
+- `SAP_URL`, `SAP_CLIENT`, `SAP_USER`, `SAP_PASSWORD` (for sapcli)
+
+**Network prerequisites**: HANA port 443 (Cloud) or 3\<sysnr\>15 (on-prem) + SAP HTTPS port.
+
+```bash
+# Verify MATDOC table exists and has data after conversion
+hdbsql -n "${HANA_HOST}:443" -u "${HANA_USER}" -p "${HANA_PASSWORD}" -encrypt \
+  "SELECT COUNT(*) AS row_count FROM MATDOC"
+
+# Verify ACDOCA Universal Journal has entries
+hdbsql -n "${HANA_HOST}:443" -u "${HANA_USER}" -p "${HANA_PASSWORD}" -encrypt \
+  "SELECT COUNT(*) AS row_count FROM ACDOCA WHERE RLDNR = '0L' AND GJAHR = '2025'"
+
+# Verify BP synchronization — check CVI link table
+hdbsql -n "${HANA_HOST}:443" -u "${HANA_USER}" -p "${HANA_PASSWORD}" -encrypt \
+  "SELECT COUNT(*) FROM CVI_CUST_LINK"
+
+# Download a custom object that touches deprecated tables for review
+sapcli checkout class zcl_stock_report
+```
+
+These queries validate that the major simplification conversions (MATDOC, ACDOCA, BP/CVI) completed successfully. Discrepancies indicate data conversion issues that must be resolved before go-live ([SAP Help: hdbsql](https://help.sap.com/docs/hana/sap-hana-client-interface-programming-reference), [sapcli](https://github.com/jfilak/sapcli)).
+
+> **Cross-reference**: For a full catalog of CLIs available in the Devin sandbox, see skill `sap-cli-toolbelt`.
 
 ## Worked example
 

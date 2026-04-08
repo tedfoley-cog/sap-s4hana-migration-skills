@@ -9,7 +9,7 @@ description: |
   migrating BSEG reads to ACDOCA, or tuning FOR ALL ENTRIES usage on HANA.
 license: Apache-2.0
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
   last_verified: "2026-04-07"
   s4hana_release: "2023, 2024, 2025, 2025 FPS01"
   sources:
@@ -22,11 +22,15 @@ metadata:
     - "SAP-samples/abap-cheat-sheets — 03_ABAP_SQL.md, 12_AMDP.md, 15_CDS_View_Entities.md, 32_Performance_Notes.md"
     - "SAP/abap-cleaner rule set"
     - "SAP Help Portal — ABAP SQL, CDS View Entities"
+    - "SAP HANA Client hdbsql (https://help.sap.com/docs/hana/sap-hana-client-interface-programming-reference)"
+    - "sapcli — ADT command-line client (https://github.com/jfilak/sapcli)"
 related_skills:
-  - sap-modern-abap-rewrite
-  - sap-functional-simplifications
-  - sap-clean-core-extensibility
   - sap-atc-readiness
+  - sap-clean-core-extensibility
+  - sap-cli-toolbelt
+  - sap-functional-simplifications
+  - sap-migration-testing
+  - sap-modern-abap-rewrite
 ---
 
 ## When to use this skill
@@ -360,6 +364,41 @@ SRTCM findings complement SQLM data: SQLM tells you *which* statements are expen
 2. Compare SQLM metrics before and after remediation (total DB time, executions, rows).
 3. Execute functional regression tests for affected business processes (see `sap-migration-testing` skill).
 4. For CDS views: validate using CDS test doubles or ABAP Unit tests with `CL_CDS_TEST_ENVIRONMENT`.
+
+
+### CLI usage
+
+Use `hdbsql` for direct HANA performance diagnostics. These queries surface the most expensive custom SQL statements, enable execution plan analysis, and check column-store memory consumption.
+
+**Environment variables**: `HANA_HOST`, `HANA_USER`, `HANA_PASSWORD`
+
+**Network prerequisites**: HANA port 443 (Cloud) or 3\<sysnr\>15 (on-prem).
+
+```bash
+# Top 20 most expensive custom SQL statements (by total execution time)
+hdbsql -n "${HANA_HOST}:443" -u "${HANA_USER}" -p "${HANA_PASSWORD}" -encrypt \
+  "SELECT TOP 20 STATEMENT_HASH, USER_NAME, EXECUTION_COUNT,
+          TOTAL_EXECUTION_TIME, AVG_EXECUTION_TIME,
+          SUBSTR(STATEMENT_STRING, 1, 200) AS SQL_PREVIEW
+   FROM M_EXPENSIVE_STATEMENTS
+   WHERE USER_NAME LIKE 'SAP%' OR USER_NAME LIKE 'Z%'
+   ORDER BY TOTAL_EXECUTION_TIME DESC"
+
+# Execution plan for a specific query (replace <hash> with statement hash)
+hdbsql -n "${HANA_HOST}:443" -u "${HANA_USER}" -p "${HANA_PASSWORD}" -encrypt \
+  "EXPLAIN PLAN FOR SELECT ebeln, ebelp, matnr FROM ekpo WHERE ebeln = '4500000001'"
+
+# Column-store table memory consumption — find largest custom tables
+hdbsql -n "${HANA_HOST}:443" -u "${HANA_USER}" -p "${HANA_PASSWORD}" -encrypt \
+  "SELECT TOP 20 SCHEMA_NAME, TABLE_NAME,
+          ROUND(MEMORY_SIZE_IN_TOTAL / 1024 / 1024, 2) AS SIZE_MB
+   FROM M_CS_TABLES
+   ORDER BY MEMORY_SIZE_IN_TOTAL DESC"
+```
+
+Cross-reference `M_EXPENSIVE_STATEMENTS` results with SQLM findings (Step 1) to prioritize remediation. Large custom tables in `M_CS_TABLES` may need partitioning or archiving for optimal column-store performance ([SAP Help: hdbsql](https://help.sap.com/docs/hana/sap-hana-client-interface-programming-reference)).
+
+> **Cross-reference**: For a full catalog of CLIs available in the Devin sandbox, see skill `sap-cli-toolbelt`.
 
 ## Worked example
 

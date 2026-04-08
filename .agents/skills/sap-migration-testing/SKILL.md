@@ -15,7 +15,7 @@ description: |
   tools such as Tricentis Tosca or Worksoft Certify for SAP regression packs.
 license: Apache-2.0
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
   last_verified: "2026-04-07"
   s4hana_release: "2023, 2024, 2025"
   sources:
@@ -32,12 +32,17 @@ metadata:
     - "SAP Community — Running your System Conversion to SAP S/4HANA Cloud (2025)"
     - "SAP Press — Testing SAP Solutions (2nd Edition)"
     - "SAP Community — Test Automation Tool for SAP S/4HANA Cloud (Aniruddh, November 2022)"
+    - "sapcli — ADT command-line client (https://github.com/jfilak/sapcli)"
+    - "Project Piper (https://www.project-piper.io/)"
+    - "SAP HANA Client hdbsql (https://help.sap.com/docs/hana/sap-hana-client-interface-programming-reference)"
 related_skills:
-  - sap-sum-dmo
-  - sap-spdd-spau
+  - sap-atc-readiness
+  - sap-cli-toolbelt
+  - sap-data-migration-cockpit
   - sap-functional-simplifications
   - sap-hana-performance
-  - sap-atc-readiness
+  - sap-spdd-spau
+  - sap-sum-dmo
 ---
 
 ## When to use this skill
@@ -200,6 +205,60 @@ Hypercare is the stabilization period immediately after production go-live. Plan
    - Intercompany elimination and consolidation — verify IC reconciliation reports.
 4. **Defect triage SLA**: S1 (system-down) = 2-hour response, S2 (critical business process blocked) = 4-hour response, S3 = next business day, S4 = backlog.
 5. **Hypercare exit criteria**: 2 consecutive weeks with zero S1/S2 defects, first month-end close completed successfully, all batch jobs stable, key user confidence survey > 80% satisfaction.
+
+
+### CLI usage
+
+Use `sapcli` for automated ABAP Unit test execution and `piper` for CI pipeline orchestration.
+
+**Environment variables**: `SAP_URL`, `SAP_CLIENT`, `SAP_USER`, `SAP_PASSWORD`
+
+**Network prerequisites**: SAP HTTPS port (typically 443 or 44300).
+
+```bash
+# Run ABAP Unit tests for a specific class and output JUnit XML
+sapcli aunit run class zcl_invoice_builder --output junit4 > aunit_results.xml
+
+# Run ABAP Unit tests for an entire package
+sapcli aunit run package '$Z_CUSTOM_PKG' --output junit4 > aunit_package.xml
+
+# Parse JUnit XML to check for failures
+python3 -c "
+import xml.etree.ElementTree as ET
+tree = ET.parse('aunit_results.xml')
+root = tree.getroot()
+for suite in root.findall('.//testsuite'):
+    name = suite.get('name', '')
+    failures = int(suite.get('failures', 0))
+    errors = int(suite.get('errors', 0))
+    tests = int(suite.get('tests', 0))
+    print(f'{name}: {tests} tests, {failures} failures, {errors} errors')
+"
+
+# Data reconciliation query — compare record counts between source and target
+hdbsql -n "${HANA_HOST}:443" -u "${HANA_USER}" -p "${HANA_PASSWORD}" -encrypt \
+  "SELECT 'ACDOCA' AS tbl, COUNT(*) AS cnt FROM ACDOCA WHERE RLDNR='0L'
+   UNION ALL
+   SELECT 'MATDOC', COUNT(*) FROM MATDOC
+   UNION ALL
+   SELECT 'BUT000', COUNT(*) FROM BUT000"
+```
+
+**CI orchestration with Project Piper:**
+
+For continuous integration of ABAP Unit tests, use the `piper` CLI to orchestrate test runs as part of a Jenkins or GitHub Actions pipeline:
+
+```bash
+# Example Piper step for ABAP Unit execution
+piper abapEnvironmentRunAUnitTest \
+  --host "${SAP_URL}" \
+  --username "${SAP_USER}" \
+  --password "${SAP_PASSWORD}"
+```
+
+The `--output junit4` flag on `sapcli aunit` produces standard JUnit XML that integrates with any CI system's test reporting ([sapcli README](https://github.com/jfilak/sapcli), [Project Piper](https://www.project-piper.io/)).
+
+> **Cross-reference**: For a full catalog of CLIs available in the Devin sandbox, see skill `sap-cli-toolbelt`.
 
 ## Worked example
 

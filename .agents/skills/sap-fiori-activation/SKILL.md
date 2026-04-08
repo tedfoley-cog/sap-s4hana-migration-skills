@@ -11,7 +11,7 @@ description: |
   the post-conversion UX rollout from SAP GUI to Fiori.
 license: Apache-2.0
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
   last_verified: "2026-04-07"
   s4hana_release: "2023, 2024, 2025"
   sources:
@@ -24,9 +24,13 @@ metadata:
     - "SAP Fiori Apps Reference Library"
     - "SAP Help Portal — Activating SAP Fiori Content for SAP S/4HANA"
     - "SAP Community — Sergio Guerrero blog series on Fiori activation"
+    - "SAP UI5 Tooling (https://sap.github.io/ui5-tooling/)"
+    - "Cloud Foundry CLI cf (https://docs.cloudfoundry.org/cf-cli/)"
+    - "SAP Fiori Tools @sap/generator-fiori (https://help.sap.com/docs/SAP_FIORI_tools)"
 related_skills:
-  - sap-sum-dmo
   - sap-clean-core-extensibility
+  - sap-cli-toolbelt
+  - sap-sum-dmo
 ---
 
 ## When to use this skill
@@ -256,6 +260,41 @@ After activating apps and assigning roles, you must invalidate the Launchpad cli
 | Analytical tile shows "KPI not found" | Smart Business KPI not configured | Activate KPI via app **Manage KPIs and Reports** (App ID `F1498`) |
 
 ([SAP Note 1685257](https://me.sap.com/notes/1685257))
+
+
+### CLI usage
+
+Use `ui5` for local Fiori app development, `cf` with the HTML5 plugin for app repository management, and `@sap/generator-fiori` for scaffolding.
+
+**Environment variables**:
+- `CF_API_ENDPOINT`, `CF_ORG`, `CF_SPACE`, `BTP_USERNAME`, `BTP_PASSWORD`
+
+**Network prerequisites**: BTP CF API endpoint:443.
+
+```bash
+# Scaffold a new Fiori Elements application
+npx @sap/generator-fiori
+
+# Initialize a UI5 project
+ui5 init
+
+# Build the UI5 application for deployment
+ui5 build --all
+
+# Install the HTML5 apps repository plugin for cf CLI
+cf install-plugin -r CF-Community "html5-plugin"
+
+# List deployed HTML5 apps in the current space
+cf html5-list
+
+# Deploy an MTA archive containing the Fiori app
+cf install-plugin multiapps
+cf deploy ./dist/my-fiori-app_1.0.0.mtar
+```
+
+For custom Fiori apps built in SAP Business Application Studio, the `ui5 build` + `cf deploy` pipeline replaces manual BSP upload. The `html5-plugin` provides visibility into deployed app versions ([UI5 Tooling](https://sap.github.io/ui5-tooling/), [cf CLI](https://docs.cloudfoundry.org/cf-cli/), [SAP Fiori Tools](https://help.sap.com/docs/SAP_FIORI_tools)).
+
+> **Cross-reference**: For a full catalog of CLIs available in the Devin sandbox, see skill `sap-cli-toolbelt`.
 
 ## Worked example
 

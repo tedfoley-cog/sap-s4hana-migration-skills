@@ -13,7 +13,7 @@ description: |
   successive readiness runs.
 license: Apache-2.0
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
   last_verified: "2026-04-07"
   s4hana_release: "2023, 2024, 2025, 2025 FPS01"
   sources:
@@ -24,11 +24,18 @@ metadata:
     - "SAP Note 2270689 - Simplification Database loading"
     - "SAP Help Portal - ABAP Test Cockpit"
     - "SAP/abap-atc-cr-cv-s4hc-tools on GitHub"
+    - "sapcli — ADT command-line client (https://github.com/jfilak/sapcli)"
 related_skills:
+  - sap-clean-core-extensibility
+  - sap-cli-toolbelt
+  - sap-functional-simplifications
+  - sap-hana-performance
+  - sap-migration-testing
+  - sap-modern-abap-rewrite
   - sap-scoping
   - sap-simplification-database
   - sap-spdd-spau
-  - sap-modern-abap-rewrite
+  - sap-sum-dmo
 ---
 
 ## When to use this skill
@@ -216,6 +223,41 @@ Delta worklists compare two successive ATC runs to show remediation progress ([S
    - **New findings**: Findings introduced by code changes since the last run.
    - **Remaining findings**: Findings that still require attention.
 4. Use the cleared/remaining ratio to report progress to project stakeholders.
+
+
+### CLI usage
+
+`sapcli` can drive ATC check runs from the command line, enabling scripted readiness assessments without SAP GUI access.
+
+**Environment variables**: `SAP_URL`, `SAP_CLIENT`, `SAP_USER`, `SAP_PASSWORD`
+
+**Network prerequisites**: SAP system HTTPS port (typically 443 or 44300).
+
+```bash
+# Run the S/4HANA readiness check variant against a package
+# Syntax: sapcli atc run {package,class,program} OBJECT_NAME [-r VARIANT] [-o {human,html,checkstyle}]
+sapcli atc run package '$Z_CUSTOM_PKG' -r S4HANA_READINESS_2025 -o checkstyle > atc_results.xml
+
+# Parse the checkstyle XML results — count findings by severity
+python3 -c "
+import xml.etree.ElementTree as ET
+tree = ET.parse('atc_results.xml')
+root = tree.getroot()
+for f in root.findall('.//file'):
+    name = f.get('name', '')
+    errors = f.findall('error')
+    print(f'{name}: {len(errors)} findings')
+    for e in errors:
+        print(f'  [{e.get(\"severity\")}] line {e.get(\"line\")}: {e.get(\"message\")}')
+"
+
+# Run against a specific class
+sapcli atc run class zcl_customer_helper -r S4HANA_READINESS_2025 -o checkstyle
+```
+
+This integrates directly with the delta worklist workflow (Step 8) — re-run after remediation to produce a diff of cleared vs. remaining findings ([sapcli README](https://github.com/jfilak/sapcli)).
+
+> **Cross-reference**: For a full catalog of CLIs available in the Devin sandbox, see skill `sap-cli-toolbelt`.
 
 ## Worked example
 

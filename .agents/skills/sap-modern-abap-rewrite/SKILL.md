@@ -11,7 +11,7 @@ description: |
   for ABAP Cloud / clean core compliance by removing forbidden classic statements.
 license: Apache-2.0
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
   last_verified: "2026-04-07"
   s4hana_release: "2023, 2024, 2025"
   sources:
@@ -22,10 +22,14 @@ metadata:
     - "SAP Help Portal - ABAP Keyword Documentation"
     - "SAP Press - ABAP to the Future (3rd edition)"
     - "Clean ABAP Styleguide (SAP/styleguides)"
+    - "sapcli — ADT command-line client (https://github.com/jfilak/sapcli)"
+    - "SAP/abap-cleaner (https://github.com/SAP/abap-cleaner)"
 related_skills:
-  - sap-hana-performance
-  - sap-clean-core-extensibility
   - sap-atc-readiness
+  - sap-clean-core-extensibility
+  - sap-cli-toolbelt
+  - sap-functional-simplifications
+  - sap-hana-performance
 ---
 
 ## When to use this skill
@@ -393,6 +397,41 @@ ENDTRY.
 ```
 
 When wrapping existing function modules, create a custom exception class inheriting from `CX_STATIC_CHECK` (for expected errors callers must handle) or `CX_DYNAMIC_CHECK` (for programming errors).
+
+
+### CLI usage
+
+The full `sapcli → abap-cleaner → sapcli → aunit` pipeline automates the modernization workflow from download through verification.
+
+**Environment variables**: `SAP_URL`, `SAP_CLIENT`, `SAP_USER`, `SAP_PASSWORD`
+
+**Network prerequisites**: SAP HTTPS port (typically 443 or 44300).
+
+```bash
+# Step 1: Download the source of the class to modernize
+sapcli checkout class zcl_invoice_builder ./rewrite
+
+# Step 2: Run abap-cleaner in headless mode to apply modernization rules
+java -jar abap-cleaner.jar \
+  --sourcefile ./rewrite/zcl_invoice_builder.clas.abap \
+  --targetfile ./rewrite/zcl_invoice_builder_cleaned.clas.abap \
+  --profile profiles/team-profile.cfg
+
+# Step 3: Review the diff
+diff -u ./rewrite/zcl_invoice_builder.clas.abap \
+        ./rewrite/zcl_invoice_builder_cleaned.clas.abap
+
+# Step 4: Write the cleaned source back to the SAP system and activate
+sapcli class write zcl_invoice_builder \
+  ./rewrite/zcl_invoice_builder_cleaned.clas.abap --activate
+
+# Step 5: Run ABAP Unit tests to verify nothing broke
+sapcli aunit run class zcl_invoice_builder --output junit4 > aunit_results.xml
+```
+
+This pipeline lets Devin iterate on ABAP modernization without SAP GUI or ADT. The `--output junit4` flag produces standard JUnit XML for CI integration ([sapcli README](https://github.com/jfilak/sapcli), [abap-cleaner](https://github.com/SAP/abap-cleaner)).
+
+> **Cross-reference**: For a full catalog of CLIs available in the Devin sandbox, see skill `sap-cli-toolbelt`.
 
 ## Worked example
 

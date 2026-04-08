@@ -8,7 +8,7 @@ description: |
   or operating the Custom Code Migration Fiori app on SAP BTP.
 license: Apache-2.0
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
   last_verified: "2026-04-07"
   s4hana_release: "2023, 2024, 2025, 2025 FPS01"
   sources:
@@ -21,9 +21,11 @@ metadata:
     - "SAP Community — Olga Dolinskaja, ABAP Call Monitor (SCMON) blog series"
     - "SAP Community — Olga Dolinskaja, Aggregate usage data blog"
     - "SAP Note 2399707 — Custom Code Migration Pre-Checks"
+    - "sapcli — ADT command-line client (https://github.com/jfilak/sapcli)"
 related_skills:
   - sap-atc-readiness
   - sap-clean-core-extensibility
+  - sap-cli-toolbelt
 ---
 
 ## When to use this skill
@@ -163,6 +165,31 @@ The final output of scoping is a **worklist of custom objects that will be kept*
 1. Export the "Keep" and "Refactor" objects from the Custom Code Migration app (or CCLM) as a CSV or transport-based object list.
 2. This list becomes the input for the sibling skill `sap-atc-readiness`, which runs the S/4HANA-specific ATC check variant (e.g., `/SDF/S4_HANA_READINESS_2025`) against only the in-scope objects ([SAP Note 2436688](https://me.sap.com/notes/2436688)).
 3. By scoping first, you dramatically reduce the ATC worklist — typically by 30–60% in systems with significant dead code — and avoid wasting remediation effort on objects that will be deleted.
+
+
+### CLI usage
+
+When Devin has network access to the SAP system, use `sapcli` to automate package-level source inspection during scoping.
+
+**Environment variables** (must be configured as Devin secrets):
+- `SAP_URL`, `SAP_CLIENT`, `SAP_USER`, `SAP_PASSWORD`
+
+**Network prerequisites**: SAP system HTTPS port (typically 443 or 44300) must be reachable.
+
+```bash
+# List all objects in a custom package
+sapcli package list '$Z_CUSTOM_PKG' --recursive
+
+# Download a specific class for offline analysis
+sapcli checkout class zcl_customer_helper
+
+# Download an entire package tree for grep / static analysis
+sapcli checkout package '$Z_CUSTOM_PKG' ./scoping-export --recursive
+```
+
+Use the exported source to build the scoped worklist before feeding it to ATC (see `sap-atc-readiness`). This avoids manual SE80 navigation and scales to thousands of objects ([sapcli README](https://github.com/jfilak/sapcli)).
+
+> **Cross-reference**: For a full catalog of CLIs available in the Devin sandbox, see skill `sap-cli-toolbelt`.
 
 ## Worked example
 

@@ -25,6 +25,7 @@ This repository is the canonical source of agent-readable runbooks for the major
 | [`sap-clean-core-extensibility`](.agents/skills/sap-clean-core-extensibility/SKILL.md) | Strategy |
 | [`sap-data-migration-cockpit`](.agents/skills/sap-data-migration-cockpit/SKILL.md) | Data |
 | [`sap-fiori-activation`](.agents/skills/sap-fiori-activation/SKILL.md) | UX |
+| [`sap-cli-toolbelt`](.agents/skills/sap-cli-toolbelt/SKILL.md) | Cross-cutting |
 | [`sap-migration-testing`](.agents/skills/sap-migration-testing/SKILL.md) | Validation |
 
 ## Installation
