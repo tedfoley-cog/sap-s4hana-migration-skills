@@ -268,26 +268,19 @@ for ref_link in ref_links:
         print(f"FAIL [{expected_name}]: body links to 'references/{ref_link}' but file does not exist")
         ok = False
 
-# Communicate warn_count back to bash via exit code:
-# 0 = ok, no warnings; 2 = ok, has warnings; 1 = errors
-if not ok:
-    sys.exit(1)
-elif warn_count > 0:
-    print(f"PY_WARN_COUNT={warn_count}")
-    sys.exit(2)
-else:
-    sys.exit(0)
+# Always emit warn_count so bash can parse it even when there are errors
+print(f"PY_WARN_COUNT={warn_count}")
+sys.exit(0 if ok else 1)
 PY
     py_exit=$?
     set -e
     # Print all output (FAIL/WARN lines) so they appear in the log, excluding machine-readable markers
     grep -v '^PY_WARN_COUNT=' "$py_output_file" || true
+    # Parse PY_WARN_COUNT=N from Python output (emitted regardless of pass/fail)
+    py_warns=$(grep -oP 'PY_WARN_COUNT=\K[0-9]+' "$py_output_file" || echo 0)
+    warnings=$((warnings + py_warns))
     if [ $py_exit -eq 1 ]; then
         errors=$((errors + 1))
-    elif [ $py_exit -eq 2 ]; then
-        # Parse PY_WARN_COUNT=N from Python output
-        py_warns=$(grep -oP 'PY_WARN_COUNT=\K[0-9]+' "$py_output_file" || echo 0)
-        warnings=$((warnings + py_warns))
     fi
     rm -f "$py_output_file"
 done
