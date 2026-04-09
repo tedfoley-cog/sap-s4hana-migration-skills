@@ -9,7 +9,7 @@
 #   4. `name` matches the directory name.
 #   5. `description` starts with "Use when".
 #   6. `license` is "Apache-2.0".
-#   7. `last_verified` is within the past 30 days.
+#   7. `last_verified` is within the past 14 days.
 #   8. Body contains the 7 required section headings.
 #   9. Body length: warn at 500 lines, error at 600 lines.
 #  10. Reference files >50 lines must have a table of contents.
@@ -168,8 +168,8 @@ lv = meta.get("last_verified")
 if lv:
     try:
         d = datetime.date.fromisoformat(str(lv))
-        if (datetime.date.today() - d).days > 30:
-            print(f"WARN [{expected_name}]: last_verified is more than 30 days old ({lv})")
+        if (datetime.date.today() - d).days > 14:
+            print(f"WARN [{expected_name}]: last_verified is more than 14 days old ({lv})")
             warn_count += 1
     except Exception:
         print(f"FAIL [{expected_name}]: last_verified must be ISO date YYYY-MM-DD")
