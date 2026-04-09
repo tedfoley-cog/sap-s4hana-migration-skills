@@ -16,5 +16,21 @@ jobs:
           python-version: "3.11"
       - name: Install PyYAML
         run: pip install pyyaml
-      - name: Validate skills
+      - name: Validate skills (structural)
         run: ./scripts/validate-skills.sh
+      - name: Validate CLI commands
+        run: python3 scripts/validate-cli-commands.py --manifest scripts/cli-manifest.json
+      - name: Check links (inventory only on PR)
+        run: python3 scripts/check-links.py --offline
+
+  check-links:
+    runs-on: ubuntu-latest
+    # Full HTTP liveness checks run weekly, not on every PR
+    if: github.event_name == 'schedule'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check links (full HTTP)
+        run: python3 scripts/check-links.py --timeout 30 --workers 4

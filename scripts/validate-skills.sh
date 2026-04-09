@@ -15,6 +15,14 @@
 #  10. Reference files >50 lines must have a table of contents.
 #  11. Cross-references in related_skills must be bidirectional.
 #  12. Worked example reference files should be ≤120 lines.
+#  13. Section headings appear in the required order (AUTHORING.md §3).
+#  14. Minimum 5 inline citations in SKILL.md body.
+#  15. Description quality: length check and trigger-phrase count.
+#  16. No base64 data URIs (AUTHORING.md §6).
+#  17. No `tools:` field in frontmatter (AUTHORING.md §6).
+#  18. No secrets/credential patterns in body.
+#  19. metadata.s4hana_release is non-empty.
+#  20. Body links to reference files resolve on disk.
 #
 # Exits non-zero on any failure. Warnings do not cause failure.
 
@@ -93,13 +101,15 @@ for skill_dir in "$SKILLS_DIR"/*/; do
     fi
 
     # ── Frontmatter and body validation via Python ──
-    python3 - "$skill_file" "$skill_name" <<'PY' || errors=$((errors + 1))
+    python3 - "$skill_file" "$skill_name" "$skill_dir" <<'PY' || errors=$((errors + 1))
 import sys
 import re
+import os
 import datetime
 
 path = sys.argv[1]
 expected_name = sys.argv[2]
+skill_dir = sys.argv[3]
 text = open(path, encoding="utf-8").read()
 
 m = re.match(r"^---\n(.*?)\n---\n(.*)$", text, re.DOTALL)
@@ -125,6 +135,9 @@ except Exception as e:
     sys.exit(1)
 
 ok = True
+warn_count = 0
+
+# ── Frontmatter checks ──
 
 if fm.get("name") != expected_name:
     print(f"FAIL [{expected_name}]: frontmatter.name '{fm.get('name')}' does not match directory name")
@@ -151,9 +164,38 @@ if lv:
         d = datetime.date.fromisoformat(str(lv))
         if (datetime.date.today() - d).days > 30:
             print(f"WARN [{expected_name}]: last_verified is more than 30 days old ({lv})")
+            warn_count += 1
     except Exception:
         print(f"FAIL [{expected_name}]: last_verified must be ISO date YYYY-MM-DD")
         ok = False
+
+# Check 17: No tools: field in frontmatter
+if "tools" in fm:
+    print(f"FAIL [{expected_name}]: frontmatter contains forbidden 'tools:' field (AUTHORING.md §6)")
+    ok = False
+
+# Check 19: metadata.s4hana_release is non-empty
+release = str(meta.get("s4hana_release", "")).strip()
+if "s4hana_release" in meta and not release:
+    print(f"FAIL [{expected_name}]: metadata.s4hana_release is empty")
+    ok = False
+
+# ── Description quality checks (Check 15) ──
+
+if len(desc) < 100:
+    print(f"WARN [{expected_name}]: description is only {len(desc)} chars (recommend ≥100 for good routing)")
+    warn_count += 1
+elif len(desc) > 800:
+    print(f"WARN [{expected_name}]: description is {len(desc)} chars (recommend ≤800 to limit L1 token cost)")
+    warn_count += 1
+
+# Count concrete trigger phrases in description (commas or 'or' clauses suggest specificity)
+trigger_phrases = [p.strip() for p in re.split(r',|\bor\b', desc) if len(p.strip()) > 15]
+if len(trigger_phrases) < 3:
+    print(f"WARN [{expected_name}]: description has {len(trigger_phrases)} trigger phrases (recommend ≥3 concrete situations)")
+    warn_count += 1
+
+# ── Body section checks ──
 
 required = [
     "## When to use this skill",
@@ -169,9 +211,56 @@ for section in required:
         print(f"FAIL [{expected_name}]: body missing required section '{section}'")
         ok = False
 
+# Check 13: Section ordering
+positions = []
+for section in required:
+    pos = body.find(section)
+    if pos >= 0:
+        positions.append(pos)
+if positions and positions != sorted(positions):
+    print(f"FAIL [{expected_name}]: required sections are out of order (AUTHORING.md §3)")
+    ok = False
+
 if "<!-- UNVERIFIED -->" in body:
     print(f"FAIL [{expected_name}]: body contains <!-- UNVERIFIED --> markers")
     ok = False
+
+# Check 14: Minimum inline citations
+# Match (SAP Note NNNN) and ([text](https://...)) patterns
+citation_notes = re.findall(r'\(SAP Note \d+\)', body)
+citation_links = re.findall(r'\[.*?\]\(https?://[^\)]+\)', body)
+total_citations = len(citation_notes) + len(citation_links)
+if total_citations < 5:
+    print(f"WARN [{expected_name}]: only {total_citations} inline citations in body (recommend ≥5)")
+    warn_count += 1
+
+# Check 16: No base64 data URIs
+if re.search(r'data:(image|application|text)/[a-z0-9.+-]+;base64,', text, re.IGNORECASE):
+    print(f"FAIL [{expected_name}]: contains base64 data URI (AUTHORING.md §6)")
+    ok = False
+
+# Check 18: No secrets/credential patterns
+secret_patterns = [
+    (r'\b(?:password|passwd|pwd)\s*[:=]\s*["\'][^$<{][^"\'{}}]+["\']', 'hardcoded password'),
+    (r'\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b', 'IP address'),
+]
+for pattern, label in secret_patterns:
+    matches = re.findall(pattern, body, re.IGNORECASE)
+    if matches:
+        # Filter out false positives: placeholder IPs like x.x.x.x, documentation examples
+        real_matches = [m for m in matches
+                        if not re.search(r'\bx\.x\.x\.x\b|\b0\.0\.0\.0\b|\b127\.0\.0\.1\b|\blocalhost\b|example|placeholder', m, re.IGNORECASE)]
+        if real_matches:
+            print(f"WARN [{expected_name}]: possible {label} found in body")
+            warn_count += 1
+
+# Check 20: Reference file links in body resolve on disk
+ref_links = re.findall(r'\]\(references/([^)]+)\)', body)
+for ref_link in ref_links:
+    ref_path = os.path.join(skill_dir, "references", ref_link)
+    if not os.path.isfile(ref_path):
+        print(f"FAIL [{expected_name}]: body links to 'references/{ref_link}' but file does not exist")
+        ok = False
 
 sys.exit(0 if ok else 1)
 PY
