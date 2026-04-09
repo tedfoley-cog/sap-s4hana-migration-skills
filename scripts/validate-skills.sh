@@ -101,7 +101,13 @@ for skill_dir in "$SKILLS_DIR"/*/; do
     fi
 
     # ── Frontmatter and body validation via Python ──
-    python3 - "$skill_file" "$skill_name" "$skill_dir" <<'PY' || errors=$((errors + 1))
+    # Python exits 0 (ok), 1 (errors), or 2 (ok with warnings).
+    # It prints PY_WARN_COUNT=N on the last line when exit=2.
+    # We disable set -e so a non-zero exit doesn't abort the script.
+    py_output_file=$(mktemp)
+    set +e
+    python3 - "$skill_file" "$skill_name" "$skill_dir" > "$py_output_file" 2>&1 <<'PY'
+
 import sys
 import re
 import os
@@ -262,8 +268,28 @@ for ref_link in ref_links:
         print(f"FAIL [{expected_name}]: body links to 'references/{ref_link}' but file does not exist")
         ok = False
 
-sys.exit(0 if ok else 1)
+# Communicate warn_count back to bash via exit code:
+# 0 = ok, no warnings; 2 = ok, has warnings; 1 = errors
+if not ok:
+    sys.exit(1)
+elif warn_count > 0:
+    print(f"PY_WARN_COUNT={warn_count}")
+    sys.exit(2)
+else:
+    sys.exit(0)
 PY
+    py_exit=$?
+    set -e
+    # Print all output (FAIL/WARN lines) so they appear in the log, excluding machine-readable markers
+    grep -v '^PY_WARN_COUNT=' "$py_output_file" || true
+    if [ $py_exit -eq 1 ]; then
+        errors=$((errors + 1))
+    elif [ $py_exit -eq 2 ]; then
+        # Parse PY_WARN_COUNT=N from Python output
+        py_warns=$(grep -oP 'PY_WARN_COUNT=\K[0-9]+' "$py_output_file" || echo 0)
+        warnings=$((warnings + py_warns))
+    fi
+    rm -f "$py_output_file"
 done
 
 # ──────────────────────────────────────────────
