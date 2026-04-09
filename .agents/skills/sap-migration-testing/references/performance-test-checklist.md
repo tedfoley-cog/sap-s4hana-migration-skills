@@ -3,6 +3,14 @@
 > **Sources**: [SAP Note 2399707](https://me.sap.com/notes/2399707), [SAP Help: SAP HANA SQL Analyzer](https://help.sap.com/docs/SAP_HANA_PLATFORM/b5b9a5e7116d4286956ec7eb55e46a0d), [SAP Community: SAP Project Manager's Guide to SAP Project Cutover](https://community.sap.com/t5/enterprise-resource-planning-blog-posts-by-sap/sap-project-manager-s-guide-to-sap-project-cutover/ba-p/13510809).
 > Licensed under Apache-2.0 as part of the sap-s4hana-migration-skills repository.
 
+## Contents
+
+- [When to use](#when-to-use) — trigger criteria for this checklist
+- [Pre-conversion baseline](#pre-conversion-baseline-capture-on-ecc) — ECC measurements to capture
+- [Post-conversion performance tests](#post-conversion-performance-tests) — online, batch, and custom report checks
+- [Tools reference](#tools-reference) — SAP transactions for performance analysis
+- [Thresholds and escalation](#thresholds-and-escalation) — acceptable vs. warning vs. escalate criteria
+
 ## When to use
 
 Use this checklist after each SUM/DMO dry run to validate that performance on the converted S/4HANA system meets or exceeds the ECC baseline.

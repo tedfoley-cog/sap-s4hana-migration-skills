@@ -34,6 +34,7 @@ related_skills:
   - sap-atc-readiness
   - sap-cli-toolbelt
   - sap-functional-simplifications
+  - sap-scoping
   - sap-spdd-spau
 ---
 
@@ -212,76 +213,11 @@ If the query returns zero rows, the aggregate table has been removed and custom 
 
 ## Worked example
 
-**Scenario**: A customer is converting from SAP ECC 6.0 EHP 8 to SAP S/4HANA 2025 On-Premise. The `sap-atc-readiness` skill has produced a worklist with 47 findings in message class `S4HANA_READINESS`. Several findings reference tables `KNA1` and `LFA1`. The project team needs to understand the simplification context and plan remediation.
+**Scenario**: 47 ATC findings reference tables `KNA1` and `LFA1` during an ECC 6.0 EHP8 → S/4HANA 2025 conversion. The team uses the Simplification Item Catalog and Simplification Database to build a Business Partner remediation worklist.
 
-### 1. Search the Simplification Item Catalog
+See [worked-example-sdb-bp-remediation.md](references/worked-example-sdb-bp-remediation.md) for the full 5-step walkthrough covering catalog search, SDB verification, ATC worklist filtering, remediation SAP Note review, and developer hand-off.
 
-Open `https://launchpad.support.sap.com/#/sic` and search for `Business Partner`.
-
-The catalog returns the item **"Customer/Vendor Integration"** (also known as the Business Partner approach). Key details:
-
-| Field | Value |
-|---|---|
-| Title | Customer/Vendor Integration |
-| Category | Data Model |
-| Target Release | S/4HANA 1610+ (applies to all subsequent releases) |
-| Deployment Model | On-Premise, Cloud Private Edition, Cloud Public Edition |
-| Linked SAP Note | [2265093](https://me.sap.com/notes/2265093) |
-
-The description explains that customer master data (table `KNA1`) and vendor master data (table `LFA1`) are replaced by the Business Partner model (table `BUT000`). Custom code that reads from or writes to `KNA1` / `LFA1` directly must be refactored to use `BUT000` or the corresponding CDS views (`I_Customer`, `I_Supplier`, `I_BusinessPartner`) ([SAP Note 2265093](https://me.sap.com/notes/2265093)).
-
-### 2. Confirm in the Simplification Database
-
-On the central ATC check system, verify the Simplification Database is loaded and current:
-
-```
-Transaction: SYCM
-Menu: Simplification Database → Display
-Expected: Version 2025_FPS01_xxxx (latest patch)
-```
-
-If the version is outdated, re-import from [SAP Note 2241080](https://me.sap.com/notes/2241080).
-
-### 3. Filter the ATC worklist
-
-In the ATC results for check variant `S4HANA_READINESS`, filter findings by the affected objects:
-
-```abap
-* Example ATC finding:
-* Check:    S4HANA_READINESS_SIMPL
-* Object:   Z_CUSTOMER_REPORT (Program)
-* Message:  Access to table KNA1 — replaced by Business Partner
-*           model (BUT000). See SAP Note 2265093.
-* Priority: Error (must fix before conversion)
-```
-
-From the 47 total findings, 12 reference `KNA1` or `LFA1`. These 12 custom objects form the **Business Partner remediation worklist**.
-
-### 4. Open the remediation SAP Note
-
-[SAP Note 2265093](https://me.sap.com/notes/2265093) describes:
-
-- The synchronization mechanism between `KNA1`/`LFA1` and `BUT000` during and after conversion.
-- Which BAPI calls (`BAPI_CUSTOMER_GETDETAIL`, `BAPI_VENDOR_GETDETAIL`) are replaced and by what.
-- The CDS views available as stable interfaces: `I_Customer`, `I_Supplier`, `I_BusinessPartner`.
-- The Business Partner configuration guide and the Customer/Vendor Integration (CVI) error-resolution process.
-
-### 5. Hand off to developers
-
-Prepare a remediation ticket for each affected object:
-
-```
-Object:          Z_CUSTOMER_REPORT
-Type:            Program
-Simplification:  Customer/Vendor Integration (Business Partner)
-SAP Note:        2265093
-Action required: Replace SELECT FROM KNA1 with CDS view I_Customer
-                 or table BUT000. Replace BAPI_CUSTOMER_GETDETAIL
-                 with CDS-based read. Test with BP transaction.
-Priority:        Must-fix (blocks conversion)
-```
-
-Repeat for each of the 12 objects. Hand the worklist to the development team with the simplification context attached so they can plan sprints.
+**Key outcome**: 12 of 47 findings isolated as the Business Partner remediation worklist, each with a structured ticket linking to SAP Note 2265093.
 
 ## Anti-patterns
 

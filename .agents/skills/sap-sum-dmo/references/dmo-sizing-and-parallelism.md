@@ -2,6 +2,12 @@
 
 > **Sources**: [DMO Guide](https://help.sap.com/doc/38301960cfe4484587f9ce5e8e3c4ea0/Latest/en-US/dmo_of_sum2_to_hana.pdf), [SAP Note 2882748](https://me.sap.com/notes/2882748), [SAP Note 1872170](https://me.sap.com/notes/1872170). Apache-2.0 license applies to this reference file; SAP content is paraphrased and cited.
 
+## Contents
+
+- [Target HANA Sizing](#target-hana-sizing) — memory estimation, disk space during DMO
+- [R3load Parallelism Tuning](#r3load-parallelism-tuning) — key parameters, tuning guidelines, time estimation
+- [Downtime-Optimized DMO (dDMO) Technical Details](#downtime-optimized-dmo-ddmo-technical-details) — trigger-based replication, prerequisites
+
 ## Target HANA Sizing
 
 When sizing the target SAP HANA database for a DMO-based system conversion, do **not** use the raw source database size as the baseline. S/4HANA simplifications consolidate many tables, often reducing the data footprint significantly:

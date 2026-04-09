@@ -3,6 +3,12 @@
 > **Sources**: [SAP Note 2659151](https://me.sap.com/notes/2659151), [SAP Note 3023853](https://me.sap.com/notes/3023853), [SAP Help: SAP Fiori Overview](https://help.sap.com/docs/SAP_FIORI_OVERVIEW)
 > **License**: Content paraphrased from SAP documentation; original material © SAP SE, used under fair-use citation. This file is Apache-2.0.
 
+## Contents
+
+- [Background](#background) — Groups/Catalogs legacy model
+- [Spaces and Pages model (S/4HANA 2020+)](#spaces-and-pages-model-s4hana-2020) — enabling, SAP-delivered content, custom creation, migration from Groups
+- [Catalogs still matter](#catalogs-still-matter) — authorization layer under Spaces and Pages
+
 ## Background
 
 Prior to S/4HANA 2020, the Fiori Launchpad organized content using **Catalogs** and **Groups**:

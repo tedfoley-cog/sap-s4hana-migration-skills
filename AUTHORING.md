@@ -52,6 +52,14 @@ Use exactly these top-level sections, in this order:
 
 If a section is genuinely not applicable, keep the heading and write `_Not applicable for this skill._` so reviewers know it was considered.
 
+### 3a. Content ordering and the "Lost in the Middle" problem
+
+Large Language Models reliably use information at the **start** and **end** of their context window but degrade sharply on content in the middle (Liu et al., "Lost in the Middle," 2023). This has direct consequences for skill authoring:
+
+- **Put routing-critical content at the top**: The `## When to use this skill` and `## Quick decision tree` sections appear first precisely because they determine whether the agent continues using this skill or pivots.
+- **Put corrective content at the end**: `## Anti-patterns` comes near the bottom so the agent sees "don't do X" warnings right before it starts generating output.
+- **Push deep content to reference files**: Long worked examples and reference tables in the middle of the SKILL.md are the most likely to be under-attended. Extract them to `references/` and leave a 2–3 line summary + link in the body.
+
 ## 4. Citation rules
 
 - Every factual claim about SAP behavior, transaction code, table name, or simplification gets an inline citation. Format: `(SAP Note 2185390)` or `([SAP Help](https://help.sap.com/...))`.
@@ -61,9 +69,33 @@ If a section is genuinely not applicable, keep the heading and write `_Not appli
 
 ## 5. Length
 
-- Target: ≤ 600 lines per `SKILL.md`. Hard cap: 1000 lines.
+- Target: ≤ 500 lines per `SKILL.md`. Warn at 500, hard cap: 600 lines.
 - If a topic needs more depth, push it into `references/` and link from the body.
-- The agent reads the whole `SKILL.md` when invoked. Keep it scannable.
+- The agent reads the whole `SKILL.md` when invoked. Every token competes with the conversation history — the context window is a public good.
+- Worked examples are the primary extraction target. Keep a 2–3 line summary + link in the body; move the full walkthrough to `references/worked-example-*.md`.
+
+### 5a. Progressive disclosure
+
+Skills support three levels of progressive disclosure:
+
+| Level | What loads | When | Budget |
+|---|---|---|---|
+| **1 — Metadata** | `name` + `description` from frontmatter | Session start (all skills) | ~50 tokens per skill |
+| **2 — Body** | Full `SKILL.md` body | Agent decides skill is relevant | ≤ 500 lines |
+| **3 — Reference files** | `references/*.md` or `references/*.sh` | Agent follows a link from the body | Unbounded |
+
+- Level 1 is always loaded. Write descriptions as if they are the only thing the agent will ever see (because often they are).
+- Level 2 should act like a "table of contents in an onboarding guide" — enough to execute the task, with links to deeper content.
+- Level 3 files are read on demand. They can be as long as needed but should have a table of contents at the top if > 50 lines.
+- Maximum nesting depth: 2 levels of file references from the body (body → reference file → no further links to other reference files).
+
+### 5b. Degrees of freedom
+
+Match the prescriptiveness of your prose to the fragility of the task:
+
+- **High freedom** (advisory prose, options, trade-offs): Use for subjective tasks like architecture decisions, code review, scoping judgments. Example: the `## Quick decision tree` in `sap-clean-core-extensibility`.
+- **Low freedom** (literal scripts, exact commands, step-by-step): Use for deterministic operations where deviation causes failure. Example: SUM phase commands, ATC variant setup, CLI install sequences.
+- **Executable scripts**: For fully deterministic operations (e.g., installing CLIs), bundle a `references/*.sh` script that the agent can run directly instead of regenerating commands from prose. See `sap-cli-toolbelt/references/install-cli-tools.sh`.
 
 ## 6. Things you MUST NOT do
 

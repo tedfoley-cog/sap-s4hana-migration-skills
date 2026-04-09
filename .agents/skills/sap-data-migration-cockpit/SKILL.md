@@ -30,6 +30,7 @@ related_skills:
   - sap-cli-toolbelt
   - sap-functional-simplifications
   - sap-migration-testing
+  - sap-sum-dmo
 ---
 
 ## When to use this skill
@@ -252,56 +253,11 @@ The CAP-based ETL approach lets Devin build transformation logic that feeds XML 
 
 ## Worked example
 
-**Scenario**: Migrate 1,000 customer master records from a legacy CSV file into a new S/4HANA system. Customers must be created as Business Partners with customer role (BP role `FLCU00`).
+**Scenario**: Migrate 1,000 customer master records from a legacy CSV into S/4HANA as Business Partners with customer role `FLCU00` using the Migrate Your Data Fiori app.
 
-### 1. Create the migration project
+See [worked-example-customer-migration.md](references/worked-example-customer-migration.md) for the full 6-step walkthrough covering project creation, XML template mapping, simulation with error resolution, execution, and verification.
 
-Open the **Migrate Your Data** Fiori app. Choose **Create** → **Migrate Data Using Staging Tables**.
-
-- **Project name**: `MIG_CUSTOMERS`
-- **Scenario**: SAP ERP to SAP S/4HANA
-- **Staging tables**: Not used (simple file upload)
-- **Migration object selected**: `Customer (with Business Partner)`
-
-> The `Customer (with Business Partner)` object creates both a BP record and the linked customer record in one step, including CVI synchronization ([SAP Note 2265093](https://me.sap.com/notes/2265093)).
-
-### 2. Download and fill the XML template
-
-Download the XML template for `Customer (with Business Partner)`. The template contains multiple sections:
-
-| Section | Key Fields |
-|---------|-----------|
-| Header | `BP_NUMBER`, `BP_CATEGORY`, `BP_GROUP`, `TITLE`, `NAME1`, `NAME2` |
-| Address | `STREET`, `CITY`, `POSTAL_CODE`, `COUNTRY`, `REGION` |
-| Customer General | `CUSTOMER_NUMBER`, `ACCOUNT_GROUP` |
-| Company Code | `COMPANY_CODE`, `RECON_ACCOUNT`, `PAYMENT_TERMS` |
-| Sales Area | `SALES_ORG`, `DIST_CHANNEL`, `DIVISION`, `CUST_PRICING_PROC` |
-
-Map 1,000 rows from the legacy CSV into the template. Assign BP role `FLCU00` (Customer) to each record. Set `BP_CATEGORY` = `2` (Organization) for corporate customers, `1` (Person) for individuals.
-
-### 3. Upload and simulate
-
-Upload the filled XML template in the cockpit. Choose **Simulate**.
-
-**Result**: 23 errors out of 1,000 records:
-- 12 rows: `Country code 'XX' does not exist` → Fix: correct invalid country codes in the source CSV.
-- 11 rows: `Tax classification is mandatory for sales area data` → Fix: populate `TAX_CLASSIFICATION` field.
-
-### 4. Fix and re-simulate
-
-Correct the 23 records in the CSV, regenerate the XML template, re-upload, and simulate again.
-
-**Result**: 0 errors, 1,000 records ready for migration.
-
-### 5. Execute
-
-Choose **Execute**. The cockpit creates 1,000 Business Partner records with linked Customer records. Monitor the migration project screen until status shows **Completed**.
-
-### 6. Verify
-
-- Open transaction `BP`, search for the migrated BP number range → confirm 1,000 BP records exist with role `FLCU00`.
-- Open `FD03` (Customer Display) → verify company code data, reconciliation accounts, and payment terms.
-- Run a test sales order (`VA01`) against a migrated customer to confirm sales area data is complete.
+**Key outcome**: 23 simulation errors caught and fixed before execution. 1,000 BP + Customer records created in one pass with CVI synchronization.
 
 ## Anti-patterns
 
