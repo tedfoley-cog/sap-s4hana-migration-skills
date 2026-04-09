@@ -1,0 +1,469 @@
+{
+  "btp": {
+    "available": true,
+    "source": "static",
+    "flags": [
+      "--help", "-h", "--format", "--verbose", "-v"
+    ],
+    "subcommands": {
+      "login": {
+        "flags": ["--url", "--subdomain", "--user", "--password", "--idp", "--sso", "--globalaccount"]
+      },
+      "logout": { "flags": [] },
+      "target": { "flags": ["--global-account", "--directory", "--subaccount"] },
+      "list": { "flags": ["--commands"] },
+      "subscribe": { "flags": [] },
+      "unsubscribe": { "flags": [] }
+    }
+  },
+  "cds": {
+    "available": true,
+    "flags": [
+      "-start",
+      "-based",
+      "-eval-event",
+      "--help"
+    ],
+    "subcommands": {
+      "deploy": {
+        "flags": [
+          "-2",
+          "--to",
+          "-4",
+          "--for",
+          "--profile",
+          "--dry",
+          "--no-build",
+          "--out",
+          "-o",
+          "--on",
+          "-n",
+          "--with-mocks",
+          "--no-save",
+          "--auto-undeploy",
+          "--tunnel-address",
+          "--vcap-file",
+          "--model-only",
+          "--delta-from",
+          "--script"
+        ],
+        "subcommands": {}
+      },
+      "import": {
+        "flags": [
+          "--odata",
+          "--edmx",
+          "--openapi",
+          "--asyncapi",
+          "--rfc",
+          "--data-product",
+          "--dry",
+          "--no-copy",
+          "--no-save",
+          "-o",
+          "--out",
+          "-as",
+          "--as",
+          "-f",
+          "--force",
+          "-c",
+          "--config",
+          "-separated",
+          "-value",
+          "-4",
+          "--for",
+          "--destination",
+          "-2",
+          "--into-namespace",
+          "--keep-namespace",
+          "-ns",
+          "--include-namespaces",
+          "-d",
+          "--dependencies",
+          "-n",
+          "--name",
+          "--group"
+        ],
+        "subcommands": {}
+      },
+      "init": {
+        "flags": [
+          "--add",
+          "-separated",
+          "-based",
+          "-compatible",
+          "-manifest",
+          "-sample",
+          "-specific",
+          "-by-side-extensibility",
+          "-messaging",
+          "-based-messaging",
+          "-messaging-shared",
+          "-scanner",
+          "-repo",
+          "-frontend",
+          "-logging",
+          "-standard",
+          "-actions",
+          "--nodejs",
+          "--java",
+          "-applications",
+          "-maven-archetype",
+          "--force"
+        ],
+        "subcommands": {}
+      }
+    }
+  },
+  "cf": {
+    "available": true,
+    "source": "static",
+    "flags": [
+      "--help", "-h", "-v", "--version"
+    ],
+    "subcommands": {
+      "login": {
+        "flags": ["-a", "--api", "-u", "--username", "-p", "--password", "-o", "--org", "-s", "--space", "--sso", "--skip-ssl-validation"]
+      },
+      "deploy": {
+        "flags": ["-f", "--force", "--no-start", "--strategy", "--skip-testing-phase", "--version-rule", "--delete-services", "--delete-service-keys", "--no-confirm"]
+      },
+      "install-plugin": {
+        "flags": ["-f", "-r", "--force", "--repo"]
+      },
+      "html5-list": {
+        "flags": ["-di", "--destination", "--url", "--runtime", "--name"]
+      },
+      "push": { "flags": ["-f", "--manifest", "-p", "--path", "-b", "--buildpack", "-i", "--instances", "-m", "--memory", "-k", "--disk"] },
+      "apps": { "flags": [] },
+      "services": { "flags": [] },
+      "marketplace": { "flags": ["-e"] },
+      "create-service": { "flags": ["-c", "--config"] },
+      "bind-service": { "flags": ["-c", "--config"] },
+      "create-service-key": { "flags": ["-c", "--config"] },
+      "target": { "flags": ["-o", "-s"] },
+      "bg-deploy": { "flags": ["-f", "--no-confirm"] },
+      "undeploy": { "flags": ["--delete-services", "--delete-service-keys", "--delete-service-brokers", "-f"] },
+      "dmol": { "flags": ["-i"] },
+      "mtas": { "flags": [] }
+    }
+  },
+  "hdbsql": {
+    "available": true,
+    "source": "static",
+    "note": "hdbsql takes SQL as positional args; subcommand field holds first SQL keyword",
+    "flags": [
+      "-n", "-u", "-p", "-d", "-i", "-encrypt", "-sslprovider",
+      "-sslkeystore", "-ssltruststore", "-sslhostnameincert",
+      "-j", "-A", "-a", "-C", "-c", "-F", "-m", "-o", "-q",
+      "-resultencoding", "-multi"
+    ],
+    "subcommands": {}
+  },
+  "java": {
+    "available": true,
+    "flags": [
+      "-jar",
+      "-m",
+      "--module",
+      "-file",
+      "-zero",
+      "-dcevm",
+      "-cp",
+      "-classpath",
+      "--class-path",
+      "-p",
+      "--module-path",
+      "--upgrade-module-path",
+      "--add-modules",
+      "-DEFAULT",
+      "-SYSTEM",
+      "-MODULE-PATH",
+      "--enable-native-access",
+      "-UNNAMED",
+      "--list-modules",
+      "-d",
+      "--describe-module",
+      "--dry-run",
+      "-line",
+      "--validate-modules",
+      "-D",
+      "-verbose",
+      "-version",
+      "--version",
+      "-showversion",
+      "--show-version",
+      "--show-module-resolution",
+      "-h",
+      "-help",
+      "--help",
+      "-X",
+      "--help-extra",
+      "-ea",
+      "-enableassertions",
+      "-da",
+      "-disableassertions",
+      "-esa",
+      "-enablesystemassertions",
+      "-dsa",
+      "-disablesystemassertions",
+      "-agentlib",
+      "-agentpath",
+      "-javaagent",
+      "-splash",
+      "-disable-",
+      "--enable-preview"
+    ],
+    "subcommands": {
+      "/usr/local/lib/abap-cleaner.jar": {
+        "flags": [
+          "-cleaner", "--sourcefile", "--targetfile", "--profile",
+          "--release", "--cdsext", "--overwrite", "--stats",
+          "--used-rules", "--partialresult"
+        ],
+        "subcommands": {}
+      },
+      "abap-cleaner.jar": {
+        "flags": [
+          "-cleaner", "--sourcefile", "--targetfile", "--profile",
+          "--release", "--cdsext", "--overwrite", "--stats",
+          "--used-rules", "--partialresult"
+        ],
+        "subcommands": {}
+      }
+    }
+  },
+  "mbt": {
+    "available": true,
+    "flags": [
+      "-build",
+      "-gen",
+      "-h",
+      "--help",
+      "-mta-build-tool",
+      "-v",
+      "--version"
+    ],
+    "subcommands": {
+      "assemble": {
+        "flags": []
+      },
+      "build": {
+        "flags": [
+          "-e",
+          "--extensions",
+          "-f",
+          "--filename",
+          "-h",
+          "--help",
+          "-j",
+          "--jobs",
+          "-m",
+          "--mode",
+          "--mtar",
+          "-o",
+          "--output-sync",
+          "-p",
+          "--platform",
+          "-b",
+          "--sbom-file-path",
+          "-s",
+          "--source",
+          "--strict",
+          "-t",
+          "--target"
+        ],
+        "subcommands": {}
+      },
+      "help": {
+        "flags": []
+      },
+      "init": {
+        "flags": []
+      },
+      "module-build": {
+        "flags": []
+      },
+      "mtad-gen": {
+        "flags": []
+      },
+      "sbom-gen": {
+        "flags": []
+      }
+    }
+  },
+  "piper": {
+    "available": true,
+    "source": "static",
+    "flags": [
+      "--help", "-h", "--verbose", "-v"
+    ],
+    "subcommands": {
+      "abapEnvironmentRunAUnitTest": {
+        "flags": ["--host", "--username", "--password", "--cfApiEndpoint", "--cfOrg", "--cfSpace", "--cfServiceInstance", "--cfServiceKeyName"]
+      },
+      "abapEnvironmentRunATCCheck": {
+        "flags": ["--host", "--username", "--password", "--atcConfig", "--cfApiEndpoint"]
+      },
+      "abapEnvironmentCheckoutBranch": {
+        "flags": ["--host", "--username", "--password", "--repositoryName", "--branchName"]
+      },
+      "abapEnvironmentPullGitRepo": {
+        "flags": ["--host", "--username", "--password", "--repositoryName", "--commitID"]
+      },
+      "abapEnvironmentBuild": {
+        "flags": ["--host", "--username", "--password", "--phase", "--values"]
+      },
+      "mtaBuild": {
+        "flags": ["--source", "--target", "--platform", "--extensions"]
+      },
+      "cloudFoundryDeploy": {
+        "flags": ["--apiEndpoint", "--org", "--space", "--username", "--password", "--mtaPath"]
+      }
+    }
+  },
+  "sapcli": {
+    "available": true,
+    "source": "static",
+    "flags": [
+      "--help", "-h", "--verbose", "-v", "--ashost", "--sysnr",
+      "--client", "--user", "--password", "--port", "--ssl",
+      "--no-ssl", "--verify", "--no-verify"
+    ],
+    "subcommands": {
+      "atc": {
+        "flags": ["-r", "--run", "-o", "--output", "--variant", "--max-verdicts", "--error-level"]
+      },
+      "aunit": {
+        "flags": ["--output", "-o", "--coverage-filepath"]
+      },
+      "checkout": {
+        "flags": ["--recursive", "--starting-folder", "--folder"]
+      },
+      "checkin": {
+        "flags": ["--transport", "--corrnr"]
+      },
+      "package": {
+        "flags": ["--recursive", "--test"]
+      },
+      "class": {
+        "flags": ["--activate", "--read", "--write"]
+      },
+      "program": {
+        "flags": ["--activate", "--read", "--write"]
+      },
+      "functiongroup": {
+        "flags": ["--activate"]
+      },
+      "cts": {
+        "flags": ["--release", "--transport"]
+      },
+      "gcts": {
+        "flags": ["--repo", "--url"]
+      },
+      "table": {
+        "flags": ["--output"]
+      },
+      "bsp": {
+        "flags": ["--list"]
+      }
+    }
+  },
+  "ui5": {
+    "available": true,
+    "flags": [
+      "--development",
+      "--optional",
+      "-libraries",
+      "-info",
+      "-h",
+      "--help",
+      "-v",
+      "--version",
+      "-c",
+      "--config",
+      "--dependency-definition",
+      "--workspace-config",
+      "-w",
+      "--workspace",
+      "--loglevel",
+      "--log-level",
+      "--verbose",
+      "--perf",
+      "--silent",
+      "-workspace"
+    ],
+    "subcommands": {
+      "build": {
+        "flags": [
+          "-contained",
+          "--include-all-dependencies",
+          "-h",
+          "--help",
+          "-v",
+          "--version",
+          "-c",
+          "--config",
+          "--dependency-definition",
+          "--workspace-config",
+          "-w",
+          "--workspace",
+          "--loglevel",
+          "--log-level",
+          "--verbose",
+          "--perf",
+          "--silent",
+          "-a",
+          "--all",
+          "--include-dependency",
+          "-dependency",
+          "--flat",
+          "--include-dependency-regexp",
+          "--include-dependency-tree",
+          "-dependency-tree",
+          "--exclude-dependency",
+          "--exclude-dependency-regexp",
+          "--exclude-dependency-tree",
+          "--dest",
+          "--clean-dest",
+          "--create-build-manifest",
+          "--include-task",
+          "--exclude-task",
+          "--framework-version",
+          "--cache-mode",
+          "--experimental-css-variables",
+          "-variables",
+          "-skeleton",
+          "-RTL",
+          "--output-style"
+        ],
+        "subcommands": {
+          "ui5": {}
+        }
+      },
+      "init": {
+        "flags": [
+          "-h",
+          "--help",
+          "-v",
+          "--version",
+          "-c",
+          "--config",
+          "--dependency-definition",
+          "--workspace-config",
+          "-w",
+          "--workspace",
+          "--loglevel",
+          "--log-level",
+          "--verbose",
+          "--perf",
+          "--silent"
+        ],
+        "subcommands": {}
+      },
+      "ui5": {
+        "flags": []
+      }
+    }
+  }
+}
